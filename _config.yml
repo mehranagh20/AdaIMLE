@@ -10,17 +10,19 @@
 ############################
 
 # Name of website
-title: 
+title: Adaptive IMLE
+
 
 # Your name to show in the footer
-author: Some Person
+author: Mehran Aghabozorgi
 
 ###############################################
 # --- List of links in the navigation bar --- #
 ###############################################
 
 navbar-links:
-  Author's home: "https://mehranagh20.github.io/"
+  More Links:
+    - Personal: "https://mehranagh20.github.io/"
 
 ################
 # --- Logo --- #

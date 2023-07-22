@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    
+    <title>Adaptive IMLE</title>
+    
+    
+    <description>This website is a virtual proof that I&apos;m awesome</description>
+    
+    <link>http://0.0.0.0:4000/</link>
+    <atom:link href="http://0.0.0.0:4000/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>Sample blog post to learn markdown tips</title>
+        <description>
+          There&apos;s lots to learn! - 
+          This is a demo post to show you how to write blog posts with markdown. I strongly encourage you to take 5 minutes to learn how to write in markdown - it’ll teach you how to transform regular text into bold/italics/tables/etc.I also encourage you to look at the code that...
+        </description>
+        <pubDate>Fri, 28 Feb 2020 00:00:00 -0500</pubDate>
+        <link>http://0.0.0.0:4000/2020-02-28-sample-markdown/</link>
+        <guid isPermaLink="true">http://0.0.0.0:4000/2020-02-28-sample-markdown/</guid>
+      </item>
+    
+      <item>
+        <title>Test</title>
+        <description>
+          
+          hello
+
+        </description>
+        <pubDate>Wed, 26 Feb 2020 00:00:00 -0500</pubDate>
+        <link>http://0.0.0.0:4000/2020-02-26-test/</link>
+        <guid isPermaLink="true">http://0.0.0.0:4000/2020-02-26-test/</guid>
+      </item>
+    
+      <item>
+        <title>Flake it till you make it</title>
+        <description>
+          Excerpt from Soulshaping by Jeff Brown - 
+          Under what circumstances should we step off a path? When is it essential that we finish what we start? If I bought a bag of peanuts and had an allergic reaction, no one would fault me if I threw it out. If I ended a relationship with a woman who...
+        </description>
+        <pubDate>Wed, 26 Feb 2020 00:00:00 -0500</pubDate>
+        <link>http://0.0.0.0:4000/2020-02-26-flake-it-till-you-make-it/</link>
+        <guid isPermaLink="true">http://0.0.0.0:4000/2020-02-26-flake-it-till-you-make-it/</guid>
+      </item>
+    
+  </channel>
+</rss>
