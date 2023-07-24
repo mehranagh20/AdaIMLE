@@ -35,7 +35,7 @@ subtitle: "Adaptive IMLE for Few-shot Pretraining-free Generative Modelling"
                 </a>
             </li>
             <li class="list-inline-item">
-                <a href="https://www.youtube.com/watch?v=Z3Z3XZ3Z3Z3" title="Video">
+                <a href="https://youtu.be/xKt6YYY4hq8" title="Video">
                     <span class="fa-stack fa-lg" aria-hidden="true">
                         <i class="fas fa-circle fa-stack-2x"></i>
                         <i class="fa fa-video fa-stack-1x fa-inverse"></i>
