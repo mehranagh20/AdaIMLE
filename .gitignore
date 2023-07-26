@@ -1,0 +1,11 @@
+.idea/
+cifar-10*
+saved_models
+.DS_Store
+__pycache__
+dciknn_cuda
+res/
+experiments
+.vscode
+.datasets/
+datasets

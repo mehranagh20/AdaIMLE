@@ -1,0 +1,3 @@
+Found 100 images in the folder /home/mehran/data/few-shot-images/ffhq
+Found 4992 images in the folder /home/mehran/sfu/res/few-shot/ours/ffhq/5000-rep
+['../vdimle-scripts/fid/script.py', '/home/mehran/data/few-shot-images/ffhq', '/home/mehran/sfu/res/few-shot/ours/ffhq/5000-rep']: 33.15797959063741
