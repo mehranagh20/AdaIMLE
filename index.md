@@ -94,6 +94,23 @@ Adaptive IMLE trains fast and stably!
 ---
 
 <div class="div-test">
+We compare Adaptive IMLE with recent GAN and Diffusion based models:
+</div>
+<img src="assets/img/theirs.png" width="80%" class="center">
+<img src="assets/img/ours.png" width="80%" class="center">
+
+---
+
+---
+
+<div class="div-test">
+In the following figure, we can see how the Adaptive IMLE algorithm shrinks neighbourhoods around data points in a toy example.
+</div>
+<img src="assets/img/adaptive_imle_training.gif" width="50%" class="center">
+
+---
+
+<!-- <div class="div-test">
 Adaptive IMLE is capable of learning from even fewer samples without any pretraining or auxiliary datasets!
 
 The following figure shows the results of training Adaptive IMLE on 10-shot datasets.
@@ -101,7 +118,7 @@ The following figure shows the results of training Adaptive IMLE on 10-shot data
 </div>
 <img src="assets/img/10-shot2.jpg" width="80%" class="center">
 
----
+--- -->
 
 <div id="citation">
     <h2>Citation</h2>
