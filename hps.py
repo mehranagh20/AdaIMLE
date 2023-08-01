@@ -105,6 +105,7 @@ def add_imle_arguments(parser):
     parser.add_argument('--wandb_project', type=str, default='AdaptiveIMLE')  # used for wandb
     parser.add_argument('--use_wandb', type=int, default=0)
     parser.add_argument('--wandb_mode', type=str, default='online')
+    parser.add_argument('--noise_scale', type=float, default=0.0)
 
     # some metric args
     parser.add_argument("--space", choices=["z", "w"], help="space that PPL calculated with")

@@ -9,3 +9,5 @@ experiments
 .vscode
 .datasets/
 datasets
+wandb
+results/
