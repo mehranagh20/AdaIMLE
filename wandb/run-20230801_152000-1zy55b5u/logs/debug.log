@@ -1,0 +1,28 @@
+2023-08-01 15:20:00,837 INFO    MainThread:2513243 [wandb_setup.py:_flush():76] Current SDK version is 0.15.4
+2023-08-01 15:20:00,837 INFO    MainThread:2513243 [wandb_setup.py:_flush():76] Configure stats pid to 2513243
+2023-08-01 15:20:00,837 INFO    MainThread:2513243 [wandb_setup.py:_flush():76] Loading settings from /home/mehran/.config/wandb/settings
+2023-08-01 15:20:00,837 INFO    MainThread:2513243 [wandb_setup.py:_flush():76] Loading settings from /home/mehran/sfu/projects/AdaIMLE/wandb/settings
+2023-08-01 15:20:00,837 INFO    MainThread:2513243 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-08-01 15:20:00,837 INFO    MainThread:2513243 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-08-01 15:20:00,837 INFO    MainThread:2513243 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'train.py', 'program': 'train.py'}
+2023-08-01 15:20:00,838 INFO    MainThread:2513243 [wandb_init.py:_log_setup():507] Logging user logs to /home/mehran/sfu/projects/AdaIMLE/wandb/run-20230801_152000-1zy55b5u/logs/debug.log
+2023-08-01 15:20:00,838 INFO    MainThread:2513243 [wandb_init.py:_log_setup():508] Logging internal logs to /home/mehran/sfu/projects/AdaIMLE/wandb/run-20230801_152000-1zy55b5u/logs/debug-internal.log
+2023-08-01 15:20:00,838 INFO    MainThread:2513243 [wandb_init.py:init():547] calling init triggers
+2023-08-01 15:20:00,838 INFO    MainThread:2513243 [wandb_init.py:init():554] wandb.init called with sweep_config: {}
+config: {'seed': 0, 'save_dir': 'resuts/noise/train', 'data_root': '/home/mehran/data/few-shot-images/100-shot-panda', 'desc': 'train', 'dataset': 'fewshot', 'hparam_sets': 'fewshot', 'enc_blocks': None, 'dec_blocks': '1x4,4m1,4x4,8m4,8x4,16m8,16x3,32m16,32x2,64m32,64x2,128m64,128x2,256m128', 'width': 384, 'custom_width_str': '', 'bottleneck_multiple': 0.25, 'restore_path': None, 'restore_ema_path': None, 'restore_log_path': None, 'restore_optimizer_path': None, 'restore_latent_path': None, 'restore_threshold_path': None, 'ema_rate': 0.9999, 'warmup_iters': 100, 'lr': 5e-05, 'wd': 0.01, 'num_epochs': 10000, 'n_batch': 4, 'adam_beta1': 0.9, 'adam_beta2': 0.9, 'iters_per_ckpt': 5000, 'iters_per_save': 1000, 'iters_per_images': 1000, 'num_images_visualize': 8, 'num_rows_visualize': 3, 'num_comp_indices': 2, 'num_simp_indices': 7, 'imle_db_size': 1024, 'imle_factor': 0.0, 'imle_staleness': 5, 'imle_batch': 16, 'subset_len': -1, 'latent_dim': 1024, 'imle_perturb_coef': 0.001, 'lpips_net': 'vgg', 'proj_dim': 800, 'proj_proportion': 1, 'lpips_coef': 1.0, 'l2_coef': 0.1, 'force_factor': 100.0, 'change_coef': 0.01, 'change_threshold': 1, 'n_mpl': 8, 'latent_lr': 0.0001, 'latent_decay': 0.0, 'latent_epoch': 0, 'reconstruct_iter_num': 100000, 'imle_force_resample': 30, 'snoise_factor': 8, 'max_hierarchy': 256, 'load_strict': 1, 'lpips_path': './lpips', 'image_size': 256, 'num_images_to_generate': 100, 'mode': 'train', 'wandb_name': 'AdaptiveIMLE', 'wandb_project': '100-shot-panda', 'use_wandb': 1, 'wandb_mode': 'online', 'noise_scale': 0.1, 'space': None, 'batch': 16, 'n_sample': 5000, 'size': 256, 'eps': 0.0001, 'ppl_snoise': 0, 'sampling': 'end', 'step': 0.1, 'ppl_save_name': 'ppl', 'fid_factor': 5, 'fid_freq': 5, 'logdir': 'resuts/noise/train/log', 'image_channels': 3}
+2023-08-01 15:20:00,838 INFO    MainThread:2513243 [wandb_init.py:init():596] starting backend
+2023-08-01 15:20:00,838 INFO    MainThread:2513243 [wandb_init.py:init():600] setting up manager
+2023-08-01 15:20:00,840 INFO    MainThread:2513243 [backend.py:_multiprocessing_setup():106] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2023-08-01 15:20:00,841 INFO    MainThread:2513243 [wandb_init.py:init():606] backend started and connected
+2023-08-01 15:20:00,843 INFO    MainThread:2513243 [wandb_init.py:init():703] updated telemetry
+2023-08-01 15:20:00,960 INFO    MainThread:2513243 [wandb_init.py:init():736] communicating run to backend with 60.0 second timeout
+2023-08-01 15:20:01,469 INFO    MainThread:2513243 [wandb_run.py:_on_init():2176] communicating current version
+2023-08-01 15:20:01,516 INFO    MainThread:2513243 [wandb_run.py:_on_init():2185] got version response upgrade_message: "wandb version 0.15.8 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2023-08-01 15:20:01,516 INFO    MainThread:2513243 [wandb_init.py:init():787] starting run threads in backend
+2023-08-01 15:20:07,316 INFO    MainThread:2513243 [wandb_run.py:_console_start():2155] atexit reg
+2023-08-01 15:20:07,316 INFO    MainThread:2513243 [wandb_run.py:_redirect():2010] redirect: SettingsConsole.WRAP_RAW
+2023-08-01 15:20:07,316 INFO    MainThread:2513243 [wandb_run.py:_redirect():2075] Wrapping output streams.
+2023-08-01 15:20:07,316 INFO    MainThread:2513243 [wandb_run.py:_redirect():2100] Redirects installed.
+2023-08-01 15:20:07,316 INFO    MainThread:2513243 [wandb_init.py:init():828] run started, returning control to user process
+2023-08-01 16:38:13,838 WARNING MsgRouterThr:2513243 [router.py:message_loop():77] message_loop has been closed

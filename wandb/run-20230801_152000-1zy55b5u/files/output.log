@@ -1,0 +1,491 @@
+
+time: Tue Aug  1 15:20:07 2023, message: starting at epoch 0 iterate 0 eval loss inf
+/home/mehran/miniconda3/envs/mbpo2/lib/python3.8/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='none' instead.
+  warnings.warn(warning.format(ret))
+Loading model from: /home/mehran/sfu/projects/AdaIMLE/lpips/weights/v0.1/vgg.pth
+[419, 209, 104, 52, 16]
+torch.Size([1, 4194304])
+torch.Size([1, 2097152])
+torch.Size([1, 1048576])
+torch.Size([1, 524288])
+torch.Size([1, 131072])
+Outer batch - 0
+tensor(True) tensor(True)
+resampling took 99.06811261177063
+NN calculated for 1024 out of 10000 - 0.1345682144165039
+time: Tue Aug  1 15:22:26 2023, message: printing samples to resuts/noise/train/NN-samples_0-imle.png
+time: Tue Aug  1 15:22:27 2023, message: printing samples to resuts/noise/train/samples-0.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:22:49 2023, message: Saving model best fid 340.47860339591546 @ 25 to resuts/noise/train/best_fid
+time: Tue Aug  1 15:22:50 2023, model: train, type: train_loss, epoch: 0, step: 25, mean_loss: 0.91139, std_loss: 0.02606, max_loss: 1.01470, min_loss: 0.86401, fid: 340.47860, best_fid: 340.47860
+time: Tue Aug  1 15:22:59 2023, model: train, type: train_loss, epoch: 1, step: 50, mean_loss: 0.88812, std_loss: 0.02737, max_loss: 0.99813, min_loss: 0.83633
+time: Tue Aug  1 15:23:07 2023, model: train, type: train_loss, epoch: 2, step: 75, mean_loss: 0.81187, std_loss: 0.02955, max_loss: 0.91154, min_loss: 0.76329
+time: Tue Aug  1 15:23:16 2023, model: train, type: train_loss, epoch: 3, step: 100, mean_loss: 0.76767, std_loss: 0.03334, max_loss: 0.88495, min_loss: 0.71065
+time: Tue Aug  1 15:23:24 2023, model: train, type: train_loss, epoch: 4, step: 125, mean_loss: 0.74916, std_loss: 0.02518, max_loss: 0.82124, min_loss: 0.70075
+tensor(True) tensor(True)
+resampling took 99.5587522983551
+NN calculated for 1024 out of 10000 - 0.13425993919372559
+time: Tue Aug  1 15:25:07 2023, message: printing samples to resuts/noise/train/NN-samples_5-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:25:29 2023, model: train, type: train_loss, epoch: 5, step: 150, mean_loss: 0.74509, std_loss: 0.02603, max_loss: 0.81481, min_loss: 0.68843, fid: 399.39614, best_fid: 340.47860
+time: Tue Aug  1 15:25:38 2023, model: train, type: train_loss, epoch: 6, step: 175, mean_loss: 0.74368, std_loss: 0.03201, max_loss: 0.85610, min_loss: 0.68948
+time: Tue Aug  1 15:25:46 2023, model: train, type: train_loss, epoch: 7, step: 200, mean_loss: 0.73690, std_loss: 0.02976, max_loss: 0.83171, min_loss: 0.68599
+time: Tue Aug  1 15:25:55 2023, model: train, type: train_loss, epoch: 8, step: 225, mean_loss: 0.73197, std_loss: 0.02753, max_loss: 0.80877, min_loss: 0.68037
+time: Tue Aug  1 15:26:03 2023, model: train, type: train_loss, epoch: 9, step: 250, mean_loss: 0.72680, std_loss: 0.02628, max_loss: 0.80091, min_loss: 0.67819
+tensor(True) tensor(True)
+resampling took 99.69403672218323
+NN calculated for 1024 out of 10000 - 0.13504576683044434
+time: Tue Aug  1 15:27:46 2023, message: printing samples to resuts/noise/train/NN-samples_10-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:28:08 2023, model: train, type: train_loss, epoch: 10, step: 275, mean_loss: 0.72530, std_loss: 0.02805, max_loss: 0.81315, min_loss: 0.68046, fid: 372.48785, best_fid: 340.47860
+time: Tue Aug  1 15:28:16 2023, model: train, type: train_loss, epoch: 11, step: 300, mean_loss: 0.72133, std_loss: 0.02489, max_loss: 0.79736, min_loss: 0.66961
+time: Tue Aug  1 15:28:25 2023, model: train, type: train_loss, epoch: 12, step: 325, mean_loss: 0.71707, std_loss: 0.02629, max_loss: 0.79144, min_loss: 0.67363
+time: Tue Aug  1 15:28:34 2023, model: train, type: train_loss, epoch: 13, step: 350, mean_loss: 0.71137, std_loss: 0.02452, max_loss: 0.78419, min_loss: 0.66699
+time: Tue Aug  1 15:28:42 2023, model: train, type: train_loss, epoch: 14, step: 375, mean_loss: 0.71039, std_loss: 0.02491, max_loss: 0.78161, min_loss: 0.66026
+tensor(True) tensor(True)
+resampling took 99.69432020187378
+NN calculated for 1024 out of 10000 - 0.12465691566467285
+time: Tue Aug  1 15:30:25 2023, message: printing samples to resuts/noise/train/NN-samples_15-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:30:47 2023, message: Saving model best fid 321.9530051495892 @ 400 to resuts/noise/train/best_fid
+time: Tue Aug  1 15:30:48 2023, model: train, type: train_loss, epoch: 15, step: 400, mean_loss: 0.71059, std_loss: 0.02560, max_loss: 0.78058, min_loss: 0.65985, fid: 321.95301, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.011147499084472656
+time: Tue Aug  1 15:30:56 2023, model: train, type: train_loss, epoch: 16, step: 425, mean_loss: 0.70679, std_loss: 0.02462, max_loss: 0.77965, min_loss: 0.65583
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0051991939544677734
+time: Tue Aug  1 15:31:05 2023, model: train, type: train_loss, epoch: 17, step: 450, mean_loss: 0.70520, std_loss: 0.02428, max_loss: 0.77326, min_loss: 0.65564
+time: Tue Aug  1 15:31:14 2023, model: train, type: train_loss, epoch: 18, step: 475, mean_loss: 0.70427, std_loss: 0.02484, max_loss: 0.78043, min_loss: 0.65586
+time: Tue Aug  1 15:31:22 2023, model: train, type: train_loss, epoch: 19, step: 500, mean_loss: 0.69949, std_loss: 0.02310, max_loss: 0.76633, min_loss: 0.65288
+tensor(True) tensor(True)
+resampling took 99.68205118179321
+NN calculated for 1024 out of 10000 - 0.10026240348815918
+time: Tue Aug  1 15:33:05 2023, message: printing samples to resuts/noise/train/NN-samples_20-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:33:26 2023, model: train, type: train_loss, epoch: 20, step: 525, mean_loss: 0.70068, std_loss: 0.02316, max_loss: 0.76444, min_loss: 0.65340, fid: 395.41404, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.02231621742248535
+time: Tue Aug  1 15:33:29 2023, message: printing samples to resuts/noise/train/NN-samples_21-imle.png
+time: Tue Aug  1 15:33:36 2023, model: train, type: train_loss, epoch: 21, step: 550, mean_loss: 0.69540, std_loss: 0.02248, max_loss: 0.75872, min_loss: 0.64618
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.021018266677856445
+time: Tue Aug  1 15:33:38 2023, message: printing samples to resuts/noise/train/NN-samples_22-imle.png
+time: Tue Aug  1 15:33:45 2023, model: train, type: train_loss, epoch: 22, step: 575, mean_loss: 0.69406, std_loss: 0.02182, max_loss: 0.75706, min_loss: 0.64880
+time: Tue Aug  1 15:33:53 2023, model: train, type: train_loss, epoch: 23, step: 600, mean_loss: 0.69246, std_loss: 0.02162, max_loss: 0.75269, min_loss: 0.64460
+time: Tue Aug  1 15:34:02 2023, model: train, type: train_loss, epoch: 24, step: 625, mean_loss: 0.68945, std_loss: 0.02147, max_loss: 0.74760, min_loss: 0.63890
+tensor(True) tensor(True)
+resampling took 99.56086587905884
+NN calculated for 1024 out of 10000 - 0.0736687183380127
+time: Tue Aug  1 15:35:44 2023, message: printing samples to resuts/noise/train/NN-samples_25-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:36:05 2023, model: train, type: train_loss, epoch: 25, step: 650, mean_loss: 0.69273, std_loss: 0.02229, max_loss: 0.75885, min_loss: 0.64769, fid: 506.70021, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.017136812210083008
+time: Tue Aug  1 15:36:08 2023, message: printing samples to resuts/noise/train/NN-samples_26-imle.png
+time: Tue Aug  1 15:36:15 2023, model: train, type: train_loss, epoch: 26, step: 675, mean_loss: 0.68917, std_loss: 0.02166, max_loss: 0.74714, min_loss: 0.64025
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01971435546875
+time: Tue Aug  1 15:36:17 2023, message: printing samples to resuts/noise/train/NN-samples_27-imle.png
+time: Tue Aug  1 15:36:24 2023, model: train, type: train_loss, epoch: 27, step: 700, mean_loss: 0.69000, std_loss: 0.02158, max_loss: 0.74555, min_loss: 0.64325
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.009144783020019531
+time: Tue Aug  1 15:36:33 2023, model: train, type: train_loss, epoch: 28, step: 725, mean_loss: 0.68706, std_loss: 0.02110, max_loss: 0.74359, min_loss: 0.63928
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.007344722747802734
+time: Tue Aug  1 15:36:41 2023, model: train, type: train_loss, epoch: 29, step: 750, mean_loss: 0.68685, std_loss: 0.02134, max_loss: 0.73911, min_loss: 0.63799
+tensor(True) tensor(True)
+resampling took 99.45063519477844
+NN calculated for 1024 out of 10000 - 0.010582923889160156
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:38:43 2023, model: train, type: train_loss, epoch: 30, step: 775, mean_loss: 0.68527, std_loss: 0.02096, max_loss: 0.74119, min_loss: 0.63585, fid: 514.64727, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.017493724822998047
+time: Tue Aug  1 15:38:46 2023, message: printing samples to resuts/noise/train/NN-samples_31-imle.png
+time: Tue Aug  1 15:38:53 2023, model: train, type: train_loss, epoch: 31, step: 800, mean_loss: 0.68170, std_loss: 0.02081, max_loss: 0.73422, min_loss: 0.63570
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.05617237091064453
+time: Tue Aug  1 15:38:55 2023, message: printing samples to resuts/noise/train/NN-samples_32-imle.png
+time: Tue Aug  1 15:39:02 2023, model: train, type: train_loss, epoch: 32, step: 825, mean_loss: 0.68556, std_loss: 0.02104, max_loss: 0.74951, min_loss: 0.64086
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.012933015823364258
+time: Tue Aug  1 15:39:11 2023, model: train, type: train_loss, epoch: 33, step: 850, mean_loss: 0.68492, std_loss: 0.02190, max_loss: 0.74242, min_loss: 0.63668
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0067403316497802734
+time: Tue Aug  1 15:39:20 2023, model: train, type: train_loss, epoch: 34, step: 875, mean_loss: 0.68075, std_loss: 0.02012, max_loss: 0.73720, min_loss: 0.63364
+tensor(True) tensor(True)
+resampling took 99.48566246032715
+NN calculated for 1024 out of 10000 - 0.028852462768554688
+time: Tue Aug  1 15:41:02 2023, message: printing samples to resuts/noise/train/NN-samples_35-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:41:23 2023, model: train, type: train_loss, epoch: 35, step: 900, mean_loss: 0.68023, std_loss: 0.02102, max_loss: 0.73333, min_loss: 0.63103, fid: 522.79498, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.02382636070251465
+time: Tue Aug  1 15:41:25 2023, message: printing samples to resuts/noise/train/NN-samples_36-imle.png
+time: Tue Aug  1 15:41:32 2023, model: train, type: train_loss, epoch: 36, step: 925, mean_loss: 0.68469, std_loss: 0.02190, max_loss: 0.74726, min_loss: 0.63644
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0054759979248046875
+time: Tue Aug  1 15:41:41 2023, model: train, type: train_loss, epoch: 37, step: 950, mean_loss: 0.68185, std_loss: 0.02083, max_loss: 0.74306, min_loss: 0.63592
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.008064746856689453
+time: Tue Aug  1 15:41:49 2023, model: train, type: train_loss, epoch: 38, step: 975, mean_loss: 0.67858, std_loss: 0.02051, max_loss: 0.73697, min_loss: 0.63393
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.016572237014770508
+time: Tue Aug  1 15:41:52 2023, message: printing samples to resuts/noise/train/NN-samples_39-imle.png
+time: Tue Aug  1 15:41:56 2023, message: Saving model@ 1000 to resuts/noise/train/latest
+time: Tue Aug  1 15:41:59 2023, model: train, type: train_loss, epoch: 39, step: 1000, mean_loss: 0.68055, std_loss: 0.02088, max_loss: 0.73717, min_loss: 0.63257
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.008107662200927734
+time: Tue Aug  1 15:42:02 2023, message: printing samples to resuts/noise/train/samples-1000.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:42:24 2023, model: train, type: train_loss, epoch: 40, step: 1025, mean_loss: 0.67874, std_loss: 0.02029, max_loss: 0.73809, min_loss: 0.63067, fid: 510.65229, best_fid: 321.95301
+tensor(True) tensor(True)
+resampling took 99.53204417228699
+NN calculated for 1024 out of 10000 - 0.011549949645996094
+time: Tue Aug  1 15:44:12 2023, model: train, type: train_loss, epoch: 41, step: 1050, mean_loss: 0.67646, std_loss: 0.01989, max_loss: 0.73654, min_loss: 0.62314
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.02819085121154785
+time: Tue Aug  1 15:44:14 2023, message: printing samples to resuts/noise/train/NN-samples_42-imle.png
+time: Tue Aug  1 15:44:21 2023, model: train, type: train_loss, epoch: 42, step: 1075, mean_loss: 0.67913, std_loss: 0.02252, max_loss: 0.73913, min_loss: 0.63509
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.012654304504394531
+time: Tue Aug  1 15:44:30 2023, model: train, type: train_loss, epoch: 43, step: 1100, mean_loss: 0.67864, std_loss: 0.02075, max_loss: 0.73426, min_loss: 0.63197
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.008950948715209961
+time: Tue Aug  1 15:44:39 2023, model: train, type: train_loss, epoch: 44, step: 1125, mean_loss: 0.67625, std_loss: 0.02030, max_loss: 0.73176, min_loss: 0.63216
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.011522293090820312
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:45:01 2023, model: train, type: train_loss, epoch: 45, step: 1150, mean_loss: 0.67498, std_loss: 0.02089, max_loss: 0.73064, min_loss: 0.62571, fid: 523.75947, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.016986370086669922
+time: Tue Aug  1 15:45:04 2023, message: printing samples to resuts/noise/train/NN-samples_46-imle.png
+time: Tue Aug  1 15:45:11 2023, model: train, type: train_loss, epoch: 46, step: 1175, mean_loss: 0.67495, std_loss: 0.02042, max_loss: 0.72717, min_loss: 0.62580
+tensor(True) tensor(True)
+resampling took 99.54555106163025
+NN calculated for 1024 out of 10000 - 0.009276866912841797
+time: Tue Aug  1 15:46:59 2023, model: train, type: train_loss, epoch: 47, step: 1200, mean_loss: 0.67163, std_loss: 0.02039, max_loss: 0.73935, min_loss: 0.62360
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.032216787338256836
+time: Tue Aug  1 15:47:01 2023, message: printing samples to resuts/noise/train/NN-samples_48-imle.png
+time: Tue Aug  1 15:47:08 2023, model: train, type: train_loss, epoch: 48, step: 1225, mean_loss: 0.67513, std_loss: 0.02147, max_loss: 0.73543, min_loss: 0.61829
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.006700754165649414
+time: Tue Aug  1 15:47:17 2023, model: train, type: train_loss, epoch: 49, step: 1250, mean_loss: 0.67166, std_loss: 0.02046, max_loss: 0.72836, min_loss: 0.61676
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.012823343276977539
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:47:40 2023, model: train, type: train_loss, epoch: 50, step: 1275, mean_loss: 0.67306, std_loss: 0.02009, max_loss: 0.72613, min_loss: 0.63300, fid: 515.41546, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.007184743881225586
+time: Tue Aug  1 15:47:49 2023, model: train, type: train_loss, epoch: 51, step: 1300, mean_loss: 0.67274, std_loss: 0.02041, max_loss: 0.72853, min_loss: 0.63116
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.007965087890625
+time: Tue Aug  1 15:47:57 2023, model: train, type: train_loss, epoch: 52, step: 1325, mean_loss: 0.66986, std_loss: 0.01962, max_loss: 0.72146, min_loss: 0.62390
+tensor(True) tensor(True)
+resampling took 99.54446172714233
+NN calculated for 1024 out of 10000 - 0.02259373664855957
+time: Tue Aug  1 15:49:39 2023, message: printing samples to resuts/noise/train/NN-samples_53-imle.png
+time: Tue Aug  1 15:49:46 2023, model: train, type: train_loss, epoch: 53, step: 1350, mean_loss: 0.66925, std_loss: 0.02032, max_loss: 0.71948, min_loss: 0.62370
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.022257089614868164
+time: Tue Aug  1 15:49:49 2023, message: printing samples to resuts/noise/train/NN-samples_54-imle.png
+time: Tue Aug  1 15:49:56 2023, model: train, type: train_loss, epoch: 54, step: 1375, mean_loss: 0.66931, std_loss: 0.02060, max_loss: 0.73282, min_loss: 0.62182
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01260685920715332
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:50:18 2023, model: train, type: train_loss, epoch: 55, step: 1400, mean_loss: 0.67207, std_loss: 0.02134, max_loss: 0.72847, min_loss: 0.62289, fid: 500.68833, best_fid: 321.95301
+time: Tue Aug  1 15:50:27 2023, model: train, type: train_loss, epoch: 56, step: 1425, mean_loss: 0.66732, std_loss: 0.02024, max_loss: 0.72526, min_loss: 0.61966
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01188969612121582
+time: Tue Aug  1 15:50:36 2023, model: train, type: train_loss, epoch: 57, step: 1450, mean_loss: 0.66645, std_loss: 0.02044, max_loss: 0.72178, min_loss: 0.61663
+tensor(True) tensor(True)
+resampling took 99.53715920448303
+NN calculated for 1024 out of 10000 - 0.019917011260986328
+time: Tue Aug  1 15:52:18 2023, message: printing samples to resuts/noise/train/NN-samples_58-imle.png
+time: Tue Aug  1 15:52:25 2023, model: train, type: train_loss, epoch: 58, step: 1475, mean_loss: 0.66754, std_loss: 0.02068, max_loss: 0.71581, min_loss: 0.61190
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01859569549560547
+time: Tue Aug  1 15:52:27 2023, message: printing samples to resuts/noise/train/NN-samples_59-imle.png
+time: Tue Aug  1 15:52:34 2023, model: train, type: train_loss, epoch: 59, step: 1500, mean_loss: 0.67034, std_loss: 0.02217, max_loss: 0.72377, min_loss: 0.61554
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0066318511962890625
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:52:56 2023, model: train, type: train_loss, epoch: 60, step: 1525, mean_loss: 0.66755, std_loss: 0.02042, max_loss: 0.71708, min_loss: 0.61067, fid: 516.89443, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.006832599639892578
+time: Tue Aug  1 15:53:05 2023, model: train, type: train_loss, epoch: 61, step: 1550, mean_loss: 0.66815, std_loss: 0.02206, max_loss: 0.72392, min_loss: 0.60876
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.011280298233032227
+time: Tue Aug  1 15:53:14 2023, model: train, type: train_loss, epoch: 62, step: 1575, mean_loss: 0.66638, std_loss: 0.02092, max_loss: 0.72093, min_loss: 0.62568
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.005628108978271484
+time: Tue Aug  1 15:53:23 2023, model: train, type: train_loss, epoch: 63, step: 1600, mean_loss: 0.66507, std_loss: 0.02027, max_loss: 0.71417, min_loss: 0.62454
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.011604547500610352
+time: Tue Aug  1 15:53:31 2023, model: train, type: train_loss, epoch: 64, step: 1625, mean_loss: 0.66578, std_loss: 0.02113, max_loss: 0.72611, min_loss: 0.61810
+tensor(True) tensor(True)
+resampling took 99.51538920402527
+NN calculated for 1024 out of 10000 - 0.016464710235595703
+time: Tue Aug  1 15:55:13 2023, message: printing samples to resuts/noise/train/NN-samples_65-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:55:34 2023, model: train, type: train_loss, epoch: 65, step: 1650, mean_loss: 0.66449, std_loss: 0.02095, max_loss: 0.72106, min_loss: 0.61401, fid: 445.91603, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.015054464340209961
+time: Tue Aug  1 15:55:36 2023, message: printing samples to resuts/noise/train/NN-samples_66-imle.png
+time: Tue Aug  1 15:55:43 2023, model: train, type: train_loss, epoch: 66, step: 1675, mean_loss: 0.66686, std_loss: 0.02167, max_loss: 0.72154, min_loss: 0.61901
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.009304523468017578
+time: Tue Aug  1 15:55:52 2023, model: train, type: train_loss, epoch: 67, step: 1700, mean_loss: 0.66238, std_loss: 0.02072, max_loss: 0.71695, min_loss: 0.61389
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0301969051361084
+time: Tue Aug  1 15:55:54 2023, message: printing samples to resuts/noise/train/NN-samples_68-imle.png
+time: Tue Aug  1 15:56:01 2023, model: train, type: train_loss, epoch: 68, step: 1725, mean_loss: 0.66640, std_loss: 0.02283, max_loss: 0.72610, min_loss: 0.61411
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.008121490478515625
+time: Tue Aug  1 15:56:10 2023, model: train, type: train_loss, epoch: 69, step: 1750, mean_loss: 0.66097, std_loss: 0.02139, max_loss: 0.71585, min_loss: 0.60947
+tensor(True) tensor(True)
+resampling took 99.50146174430847
+NN calculated for 1024 out of 10000 - 0.016974925994873047
+time: Tue Aug  1 15:57:52 2023, message: printing samples to resuts/noise/train/NN-samples_70-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:58:13 2023, model: train, type: train_loss, epoch: 70, step: 1775, mean_loss: 0.66419, std_loss: 0.02202, max_loss: 0.71625, min_loss: 0.60982, fid: 387.91006, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.00823068618774414
+time: Tue Aug  1 15:58:22 2023, model: train, type: train_loss, epoch: 71, step: 1800, mean_loss: 0.66193, std_loss: 0.02151, max_loss: 0.71548, min_loss: 0.60710
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.013611555099487305
+time: Tue Aug  1 15:58:30 2023, model: train, type: train_loss, epoch: 72, step: 1825, mean_loss: 0.65854, std_loss: 0.02332, max_loss: 0.73252, min_loss: 0.60098
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.036171674728393555
+time: Tue Aug  1 15:58:33 2023, message: printing samples to resuts/noise/train/NN-samples_73-imle.png
+time: Tue Aug  1 15:58:40 2023, model: train, type: train_loss, epoch: 73, step: 1850, mean_loss: 0.66326, std_loss: 0.02286, max_loss: 0.73071, min_loss: 0.61449
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.006972074508666992
+time: Tue Aug  1 15:58:48 2023, model: train, type: train_loss, epoch: 74, step: 1875, mean_loss: 0.65896, std_loss: 0.02256, max_loss: 0.72514, min_loss: 0.60377
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.014913797378540039
+time: Tue Aug  1 15:58:51 2023, message: printing samples to resuts/noise/train/NN-samples_75-imle.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 15:59:12 2023, model: train, type: train_loss, epoch: 75, step: 1900, mean_loss: 0.66077, std_loss: 0.02187, max_loss: 0.72543, min_loss: 0.61846, fid: 395.78456, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0065174102783203125
+time: Tue Aug  1 15:59:20 2023, model: train, type: train_loss, epoch: 76, step: 1925, mean_loss: 0.65951, std_loss: 0.02252, max_loss: 0.72368, min_loss: 0.61540
+tensor(True) tensor(True)
+resampling took 99.66661882400513
+NN calculated for 1024 out of 10000 - 0.011861085891723633
+time: Tue Aug  1 16:01:09 2023, model: train, type: train_loss, epoch: 77, step: 1950, mean_loss: 0.66150, std_loss: 0.02342, max_loss: 0.72833, min_loss: 0.60675
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.010302305221557617
+time: Tue Aug  1 16:01:18 2023, model: train, type: train_loss, epoch: 78, step: 1975, mean_loss: 0.65663, std_loss: 0.02190, max_loss: 0.72005, min_loss: 0.60968
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.015210866928100586
+time: Tue Aug  1 16:01:20 2023, message: printing samples to resuts/noise/train/NN-samples_79-imle.png
+time: Tue Aug  1 16:01:25 2023, message: Saving model@ 2000 to resuts/noise/train/latest
+time: Tue Aug  1 16:01:28 2023, model: train, type: train_loss, epoch: 79, step: 2000, mean_loss: 0.65571, std_loss: 0.02229, max_loss: 0.71897, min_loss: 0.60726
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.022314786911010742
+time: Tue Aug  1 16:01:30 2023, message: printing samples to resuts/noise/train/NN-samples_80-imle.png
+time: Tue Aug  1 16:01:31 2023, message: printing samples to resuts/noise/train/samples-2000.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:01:53 2023, model: train, type: train_loss, epoch: 80, step: 2025, mean_loss: 0.65859, std_loss: 0.02198, max_loss: 0.71561, min_loss: 0.61142, fid: 399.49458, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.00676274299621582
+time: Tue Aug  1 16:02:02 2023, model: train, type: train_loss, epoch: 81, step: 2050, mean_loss: 0.65884, std_loss: 0.02326, max_loss: 0.71828, min_loss: 0.60281
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.006476163864135742
+time: Tue Aug  1 16:02:11 2023, model: train, type: train_loss, epoch: 82, step: 2075, mean_loss: 0.65021, std_loss: 0.02275, max_loss: 0.70521, min_loss: 0.59719
+tensor(True) tensor(True)
+resampling took 99.58882594108582
+NN calculated for 1024 out of 10000 - 0.04313349723815918
+time: Tue Aug  1 16:03:53 2023, message: printing samples to resuts/noise/train/NN-samples_83-imle.png
+time: Tue Aug  1 16:04:00 2023, model: train, type: train_loss, epoch: 83, step: 2100, mean_loss: 0.65965, std_loss: 0.02494, max_loss: 0.72897, min_loss: 0.60557
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.00919198989868164
+time: Tue Aug  1 16:04:09 2023, model: train, type: train_loss, epoch: 84, step: 2125, mean_loss: 0.65689, std_loss: 0.02494, max_loss: 0.72738, min_loss: 0.60288
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0053637027740478516
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:04:31 2023, model: train, type: train_loss, epoch: 85, step: 2150, mean_loss: 0.65310, std_loss: 0.02352, max_loss: 0.72236, min_loss: 0.60328, fid: 382.30498, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.019816160202026367
+time: Tue Aug  1 16:04:34 2023, message: printing samples to resuts/noise/train/NN-samples_86-imle.png
+time: Tue Aug  1 16:04:40 2023, model: train, type: train_loss, epoch: 86, step: 2175, mean_loss: 0.65689, std_loss: 0.02377, max_loss: 0.72507, min_loss: 0.60198
+time: Tue Aug  1 16:04:49 2023, model: train, type: train_loss, epoch: 87, step: 2200, mean_loss: 0.65055, std_loss: 0.02368, max_loss: 0.72094, min_loss: 0.59781
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.017469167709350586
+time: Tue Aug  1 16:04:51 2023, message: printing samples to resuts/noise/train/NN-samples_88-imle.png
+time: Tue Aug  1 16:04:58 2023, model: train, type: train_loss, epoch: 88, step: 2225, mean_loss: 0.65499, std_loss: 0.02421, max_loss: 0.71960, min_loss: 0.59606
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.005144357681274414
+time: Tue Aug  1 16:05:07 2023, model: train, type: train_loss, epoch: 89, step: 2250, mean_loss: 0.65403, std_loss: 0.02386, max_loss: 0.71276, min_loss: 0.59919
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.00678706169128418
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:05:30 2023, model: train, type: train_loss, epoch: 90, step: 2275, mean_loss: 0.65486, std_loss: 0.02498, max_loss: 0.71846, min_loss: 0.60285, fid: 378.56109, best_fid: 321.95301
+tensor(True) tensor(True)
+resampling took 99.63812184333801
+NN calculated for 1024 out of 10000 - 0.008902549743652344
+time: Tue Aug  1 16:07:18 2023, model: train, type: train_loss, epoch: 91, step: 2300, mean_loss: 0.65133, std_loss: 0.02325, max_loss: 0.71697, min_loss: 0.60525
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.009090900421142578
+time: Tue Aug  1 16:07:27 2023, model: train, type: train_loss, epoch: 92, step: 2325, mean_loss: 0.64850, std_loss: 0.02362, max_loss: 0.71608, min_loss: 0.60064
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.022580385208129883
+time: Tue Aug  1 16:07:29 2023, message: printing samples to resuts/noise/train/NN-samples_93-imle.png
+time: Tue Aug  1 16:07:36 2023, model: train, type: train_loss, epoch: 93, step: 2350, mean_loss: 0.65040, std_loss: 0.02462, max_loss: 0.71164, min_loss: 0.59265
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.012742757797241211
+time: Tue Aug  1 16:07:45 2023, model: train, type: train_loss, epoch: 94, step: 2375, mean_loss: 0.65198, std_loss: 0.02250, max_loss: 0.71624, min_loss: 0.60492
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.011560916900634766
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:08:08 2023, model: train, type: train_loss, epoch: 95, step: 2400, mean_loss: 0.65024, std_loss: 0.02369, max_loss: 0.70691, min_loss: 0.59991, fid: 371.78817, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.009378194808959961
+time: Tue Aug  1 16:08:16 2023, model: train, type: train_loss, epoch: 96, step: 2425, mean_loss: 0.65081, std_loss: 0.02387, max_loss: 0.71161, min_loss: 0.59748
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.005468130111694336
+time: Tue Aug  1 16:08:25 2023, model: train, type: train_loss, epoch: 97, step: 2450, mean_loss: 0.64738, std_loss: 0.02489, max_loss: 0.70893, min_loss: 0.59932
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.010065793991088867
+time: Tue Aug  1 16:08:34 2023, model: train, type: train_loss, epoch: 98, step: 2475, mean_loss: 0.64484, std_loss: 0.02396, max_loss: 0.70085, min_loss: 0.59292
+tensor(True) tensor(True)
+resampling took 99.5274031162262
+NN calculated for 1024 out of 10000 - 0.017010927200317383
+time: Tue Aug  1 16:10:16 2023, message: printing samples to resuts/noise/train/NN-samples_99-imle.png
+time: Tue Aug  1 16:10:23 2023, model: train, type: train_loss, epoch: 99, step: 2500, mean_loss: 0.64940, std_loss: 0.02514, max_loss: 0.70749, min_loss: 0.59563
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.008892059326171875
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:10:46 2023, model: train, type: train_loss, epoch: 100, step: 2525, mean_loss: 0.64861, std_loss: 0.02571, max_loss: 0.71744, min_loss: 0.59657, fid: 363.83870, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.0070400238037109375
+time: Tue Aug  1 16:10:54 2023, model: train, type: train_loss, epoch: 101, step: 2550, mean_loss: 0.64780, std_loss: 0.02467, max_loss: 0.70919, min_loss: 0.59650
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.00806736946105957
+time: Tue Aug  1 16:11:03 2023, model: train, type: train_loss, epoch: 102, step: 2575, mean_loss: 0.64491, std_loss: 0.02403, max_loss: 0.70242, min_loss: 0.59653
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01399683952331543
+time: Tue Aug  1 16:11:05 2023, message: printing samples to resuts/noise/train/NN-samples_103-imle.png
+time: Tue Aug  1 16:11:12 2023, model: train, type: train_loss, epoch: 103, step: 2600, mean_loss: 0.64178, std_loss: 0.02543, max_loss: 0.70560, min_loss: 0.58640
+tensor(True) tensor(True)
+resampling took 99.65289998054504
+NN calculated for 1024 out of 10000 - 0.030550479888916016
+time: Tue Aug  1 16:12:54 2023, message: printing samples to resuts/noise/train/NN-samples_104-imle.png
+time: Tue Aug  1 16:13:02 2023, model: train, type: train_loss, epoch: 104, step: 2625, mean_loss: 0.64666, std_loss: 0.02588, max_loss: 0.71018, min_loss: 0.59227
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.007834911346435547
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:13:25 2023, model: train, type: train_loss, epoch: 105, step: 2650, mean_loss: 0.64571, std_loss: 0.02457, max_loss: 0.69812, min_loss: 0.58987, fid: 367.73616, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.00671076774597168
+time: Tue Aug  1 16:13:33 2023, model: train, type: train_loss, epoch: 106, step: 2675, mean_loss: 0.64285, std_loss: 0.02529, max_loss: 0.71544, min_loss: 0.58363
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01887965202331543
+time: Tue Aug  1 16:13:35 2023, message: printing samples to resuts/noise/train/NN-samples_107-imle.png
+time: Tue Aug  1 16:13:42 2023, model: train, type: train_loss, epoch: 107, step: 2700, mean_loss: 0.64397, std_loss: 0.02598, max_loss: 0.72723, min_loss: 0.59090
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.015148162841796875
+time: Tue Aug  1 16:13:45 2023, message: printing samples to resuts/noise/train/NN-samples_108-imle.png
+time: Tue Aug  1 16:13:52 2023, model: train, type: train_loss, epoch: 108, step: 2725, mean_loss: 0.64276, std_loss: 0.02588, max_loss: 0.71603, min_loss: 0.59060
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.011424779891967773
+time: Tue Aug  1 16:14:00 2023, model: train, type: train_loss, epoch: 109, step: 2750, mean_loss: 0.64336, std_loss: 0.02610, max_loss: 0.71955, min_loss: 0.58656
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01158452033996582
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:14:23 2023, model: train, type: train_loss, epoch: 110, step: 2775, mean_loss: 0.64112, std_loss: 0.02610, max_loss: 0.71416, min_loss: 0.58680, fid: 344.73701, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.009274482727050781
+time: Tue Aug  1 16:14:32 2023, model: train, type: train_loss, epoch: 111, step: 2800, mean_loss: 0.64073, std_loss: 0.02576, max_loss: 0.71064, min_loss: 0.58494
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.008146524429321289
+time: Tue Aug  1 16:14:41 2023, model: train, type: train_loss, epoch: 112, step: 2825, mean_loss: 0.63856, std_loss: 0.02646, max_loss: 0.70662, min_loss: 0.58323
+tensor(True) tensor(True)
+resampling took 99.5654845237732
+NN calculated for 1024 out of 10000 - 0.007169008255004883
+time: Tue Aug  1 16:16:29 2023, model: train, type: train_loss, epoch: 113, step: 2850, mean_loss: 0.64023, std_loss: 0.02733, max_loss: 0.70919, min_loss: 0.58220
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.006779193878173828
+time: Tue Aug  1 16:16:38 2023, model: train, type: train_loss, epoch: 114, step: 2875, mean_loss: 0.63875, std_loss: 0.02740, max_loss: 0.70755, min_loss: 0.57982
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01125788688659668
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:17:01 2023, model: train, type: train_loss, epoch: 115, step: 2900, mean_loss: 0.63553, std_loss: 0.02694, max_loss: 0.70244, min_loss: 0.58147, fid: 332.89780, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.02650594711303711
+time: Tue Aug  1 16:17:03 2023, message: printing samples to resuts/noise/train/NN-samples_116-imle.png
+time: Tue Aug  1 16:17:10 2023, model: train, type: train_loss, epoch: 116, step: 2925, mean_loss: 0.63757, std_loss: 0.02669, max_loss: 0.70023, min_loss: 0.56908
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01932525634765625
+time: Tue Aug  1 16:17:13 2023, message: printing samples to resuts/noise/train/NN-samples_117-imle.png
+time: Tue Aug  1 16:17:20 2023, model: train, type: train_loss, epoch: 117, step: 2950, mean_loss: 0.63913, std_loss: 0.02744, max_loss: 0.70179, min_loss: 0.58320
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.016340017318725586
+time: Tue Aug  1 16:17:22 2023, message: printing samples to resuts/noise/train/NN-samples_118-imle.png
+time: Tue Aug  1 16:17:29 2023, model: train, type: train_loss, epoch: 118, step: 2975, mean_loss: 0.64090, std_loss: 0.02656, max_loss: 0.71967, min_loss: 0.58544
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.01140904426574707
+time: Tue Aug  1 16:17:35 2023, message: Saving model@ 3000 to resuts/noise/train/latest
+time: Tue Aug  1 16:17:39 2023, model: train, type: train_loss, epoch: 119, step: 3000, mean_loss: 0.63991, std_loss: 0.02589, max_loss: 0.71347, min_loss: 0.58390
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.006911277770996094
+time: Tue Aug  1 16:17:42 2023, message: printing samples to resuts/noise/train/samples-3000.png
+/home/mehran/data/few-shot-images/100-shot-panda/img resuts/noise/train/fid/
+compute FID between two folders
+time: Tue Aug  1 16:18:04 2023, model: train, type: train_loss, epoch: 120, step: 3025, mean_loss: 0.63347, std_loss: 0.02790, max_loss: 0.70928, min_loss: 0.56487, fid: 327.87411, best_fid: 321.95301
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.021317481994628906
+time: Tue Aug  1 16:18:06 2023, message: printing samples to resuts/noise/train/NN-samples_121-imle.png
+time: Tue Aug  1 16:18:13 2023, model: train, type: train_loss, epoch: 121, step: 3050, mean_loss: 0.63654, std_loss: 0.02551, max_loss: 0.69849, min_loss: 0.57756
+tensor(True) tensor(True)
+resampling took 99.55838966369629
+NN calculated for 1024 out of 10000 - 0.008358001708984375
+time: Tue Aug  1 16:20:02 2023, model: train, type: train_loss, epoch: 122, step: 3075, mean_loss: 0.63137, std_loss: 0.02844, max_loss: 0.69969, min_loss: 0.56719
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.03420877456665039
+time: Tue Aug  1 16:20:04 2023, message: printing samples to resuts/noise/train/NN-samples_123-imle.png
+time: Tue Aug  1 16:20:11 2023, model: train, type: train_loss, epoch: 123, step: 3100, mean_loss: 0.63933, std_loss: 0.02794, max_loss: 0.70297, min_loss: 0.57394
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.006710052490234375
+time: Tue Aug  1 16:20:20 2023, model: train, type: train_loss, epoch: 124, step: 3125, mean_loss: 0.63371, std_loss: 0.02695, max_loss: 0.70160, min_loss: 0.57034
+tensor(False) tensor(True)
+NN calculated for 1024 out of 10000 - 0.009191036224365234
+Traceback (most recent call last):
+  File "train.py", line 354, in <module>
+    main()
+  File "train.py", line 270, in main
+    train_loop_imle(H, data_train, data_valid_or_test, preprocess_fn, imle, ema_imle, logprint)
+  File "train.py", line 171, in train_loop_imle
+    torch.save(cur_dists, f'{H.save_dir}/latent/dists-{epoch}.npy')
+  File "/home/mehran/miniconda3/envs/mbpo2/lib/python3.8/site-packages/torch/serialization.py", line 369, in save
+    with _open_file_like(f, 'wb') as opened_file:
+  File "/home/mehran/miniconda3/envs/mbpo2/lib/python3.8/site-packages/torch/serialization.py", line 230, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/mehran/miniconda3/envs/mbpo2/lib/python3.8/site-packages/torch/serialization.py", line 211, in __init__
+    super(_open_file, self).__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: 'resuts/noise/train/latent/dists-125.npy'

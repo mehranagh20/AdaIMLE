@@ -1,0 +1,266 @@
+wandb_version: 1
+
+seed:
+  desc: null
+  value: 0
+save_dir:
+  desc: null
+  value: resuts/noise/train
+data_root:
+  desc: null
+  value: /home/mehran/data/few-shot-images/100-shot-panda
+desc:
+  desc: null
+  value: train
+dataset:
+  desc: null
+  value: fewshot
+hparam_sets:
+  desc: null
+  value: fewshot
+enc_blocks:
+  desc: null
+  value: null
+dec_blocks:
+  desc: null
+  value: 1x4,4m1,4x4,8m4,8x4,16m8,16x3,32m16,32x2,64m32,64x2,128m64,128x2,256m128
+width:
+  desc: null
+  value: 384
+custom_width_str:
+  desc: null
+  value: ''
+bottleneck_multiple:
+  desc: null
+  value: 0.25
+restore_path:
+  desc: null
+  value: null
+restore_ema_path:
+  desc: null
+  value: null
+restore_log_path:
+  desc: null
+  value: null
+restore_optimizer_path:
+  desc: null
+  value: null
+restore_latent_path:
+  desc: null
+  value: null
+restore_threshold_path:
+  desc: null
+  value: null
+ema_rate:
+  desc: null
+  value: 0.9999
+warmup_iters:
+  desc: null
+  value: 100
+lr:
+  desc: null
+  value: 5.0e-05
+wd:
+  desc: null
+  value: 0.01
+num_epochs:
+  desc: null
+  value: 10000
+n_batch:
+  desc: null
+  value: 4
+adam_beta1:
+  desc: null
+  value: 0.9
+adam_beta2:
+  desc: null
+  value: 0.9
+iters_per_ckpt:
+  desc: null
+  value: 5000
+iters_per_save:
+  desc: null
+  value: 1000
+iters_per_images:
+  desc: null
+  value: 1000
+num_images_visualize:
+  desc: null
+  value: 8
+num_rows_visualize:
+  desc: null
+  value: 3
+num_comp_indices:
+  desc: null
+  value: 2
+num_simp_indices:
+  desc: null
+  value: 7
+imle_db_size:
+  desc: null
+  value: 1024
+imle_factor:
+  desc: null
+  value: 0.0
+imle_staleness:
+  desc: null
+  value: 5
+imle_batch:
+  desc: null
+  value: 16
+subset_len:
+  desc: null
+  value: -1
+latent_dim:
+  desc: null
+  value: 1024
+imle_perturb_coef:
+  desc: null
+  value: 0.001
+lpips_net:
+  desc: null
+  value: vgg
+proj_dim:
+  desc: null
+  value: 800
+proj_proportion:
+  desc: null
+  value: 1
+lpips_coef:
+  desc: null
+  value: 1.0
+l2_coef:
+  desc: null
+  value: 0.1
+force_factor:
+  desc: null
+  value: 100.0
+change_coef:
+  desc: null
+  value: 0.01
+change_threshold:
+  desc: null
+  value: 1
+n_mpl:
+  desc: null
+  value: 8
+latent_lr:
+  desc: null
+  value: 0.0001
+latent_decay:
+  desc: null
+  value: 0.0
+latent_epoch:
+  desc: null
+  value: 0
+reconstruct_iter_num:
+  desc: null
+  value: 100000
+imle_force_resample:
+  desc: null
+  value: 30
+snoise_factor:
+  desc: null
+  value: 8
+max_hierarchy:
+  desc: null
+  value: 256
+load_strict:
+  desc: null
+  value: 1
+lpips_path:
+  desc: null
+  value: ./lpips
+image_size:
+  desc: null
+  value: 256
+num_images_to_generate:
+  desc: null
+  value: 100
+mode:
+  desc: null
+  value: train
+wandb_name:
+  desc: null
+  value: AdaptiveIMLE
+wandb_project:
+  desc: null
+  value: 100-shot-panda
+use_wandb:
+  desc: null
+  value: 1
+wandb_mode:
+  desc: null
+  value: online
+noise_scale:
+  desc: null
+  value: 0.1
+space:
+  desc: null
+  value: null
+batch:
+  desc: null
+  value: 16
+n_sample:
+  desc: null
+  value: 5000
+size:
+  desc: null
+  value: 256
+eps:
+  desc: null
+  value: 0.0001
+ppl_snoise:
+  desc: null
+  value: 0
+sampling:
+  desc: null
+  value: end
+step:
+  desc: null
+  value: 0.1
+ppl_save_name:
+  desc: null
+  value: ppl
+fid_factor:
+  desc: null
+  value: 5
+fid_freq:
+  desc: null
+  value: 5
+logdir:
+  desc: null
+  value: resuts/noise/train/log
+image_channels:
+  desc: null
+  value: 3
+_wandb:
+  desc: null
+  value:
+    python_version: 3.8.12
+    cli_version: 0.15.4
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1690928400.841927
+    t:
+      1:
+      - 1
+      - 5
+      - 41
+      - 53
+      - 55
+      2:
+      - 1
+      - 5
+      - 41
+      - 53
+      - 55
+      3:
+      - 13
+      - 16
+      - 23
+      4: 3.8.12
+      5: 0.15.4
+      8:
+      - 5

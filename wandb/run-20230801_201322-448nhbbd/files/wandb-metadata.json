@@ -1,0 +1,194 @@
+{
+    "os": "Linux-5.19.0-43-generic-x86_64-with-glibc2.17",
+    "python": "3.8.12",
+    "heartbeatAt": "2023-08-02T03:13:23.394741",
+    "startedAt": "2023-08-02T03:13:22.584914",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--hps",
+        "fewshot",
+        "--data_root",
+        "/home/mehran/data/few-shot-images/100-shot-panda",
+        "--change_coef",
+        "0.01",
+        "--force_factor",
+        "100",
+        "--imle_staleness",
+        "5",
+        "--imle_force_resample",
+        "30",
+        "--lr",
+        "0.00005",
+        "--save_dir",
+        "resuts/noise",
+        "--noise_scale",
+        "0.1",
+        "--use_wandb",
+        "1",
+        "--wandb_mode",
+        "online",
+        "--wandb_project",
+        "100-shot-panda"
+    ],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": "git@github.com:mehranagh20/AdaIMLE.git",
+        "commit": "c7c6ae88f52dcf8f97405a97fde2bdfdb72ab74c"
+    },
+    "email": "mehranagh200@gmail.com",
+    "root": "/home/mehran/sfu/projects/AdaIMLE",
+    "host": "cs-apex-04s",
+    "username": "mehran",
+    "executable": "/home/mehran/miniconda3/envs/mbpo2/bin/python",
+    "cpu_count": 12,
+    "cpu_count_logical": 24,
+    "cpu_freq": {
+        "current": 2.723125,
+        "min": 2200.0,
+        "max": 3700.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.65,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.709,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.799,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.709,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.776,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.333,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 4.294,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.925,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.8,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.7,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 3.7,
+            "min": 2200.0,
+            "max": 3700.0
+        },
+        {
+            "current": 2.2,
+            "min": 2200.0,
+            "max": 3700.0
+        }
+    ],
+    "disk": {
+        "total": 136.44546127319336,
+        "used": 116.23185348510742
+    },
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "gpu_count": 2,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3090",
+            "memory_total": 25769803776
+        },
+        {
+            "name": "NVIDIA GeForce RTX 3090",
+            "memory_total": 25769803776
+        }
+    ],
+    "memory": {
+        "total": 62.72550582885742
+    }
+}
