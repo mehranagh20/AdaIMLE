@@ -77,3 +77,12 @@ If you set the following wandb parameters the metrics including loss and FID sco
 `--wandb_project`: wandb project name.
 
 `--wandb_name`: run name.
+
+## Citation
+```@inproceedings{aghabozorgi2023adaimle,
+title={Adaptive IMLE for Few-shot Pretraining-free Generative Modelling
+},
+author={Mehran Aghabozorgi and Shichong Peng and Ke Li},
+booktitle={International Conference on Machine Learning},
+year={2023}
+}```
