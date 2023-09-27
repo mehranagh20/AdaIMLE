@@ -68,7 +68,7 @@ class Sampler:
         self.snoise_pool_samples_proj = torch.empty([sz * H.snoise_factor, sum(dims)], dtype=torch.float32)
     
     def sample_exp_init(self, new_orig, new_rate=1):
-        samp = self.exp.sample((new_orig.shape))
+        samp = self.exp.sample(new_orig.shape)
         return new_orig + new_rate * samp
 
 
@@ -96,7 +96,9 @@ class Sampler:
             nm = latents.shape[0]
             if snoise is None:
                 for i in range(len(self.res)):
-                    self.snoise_tmp[i].normal_()
+                    # self.snoise_tmp[i].normal_()
+                    self.snoise_tmp[i] = self.exp.sample((nm, 1, self.res[i], self.res[i]))
+
                 snoise = [s[:nm] for s in self.snoise_tmp]
             px_z = gen(latents, snoise).permute(0, 2, 3, 1)
             xhat = (px_z + 1.0) * 127.5
@@ -152,7 +154,8 @@ class Sampler:
         # self.init_projection(ds)
         self.pool_latents[:] = self.exp.sample((self.pool_size, self.H.latent_dim)) 
         for i in range(len(self.res)):
-            self.snoise_pool[i].normal_()
+            # self.snoise_pool[i].normal_()
+            self.snoise_pool[i] = self.exp.sample((self.pool_size, 1, self.res[i], self.res[i]))
 
         for j in range(self.pool_size // self.H.imle_batch):
             batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)

@@ -34,13 +34,15 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
     temp_latent_rnds = sampler.exp.sample((mb, H.latent_dim)).cuda()
     for t in range(H.num_rows_visualize):
         temp_latent_rnds = sampler.exp.sample((mb, H.latent_dim)).cuda()
-        tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+        tmp_snoise = [sampler.exp.sample(s[:mb].shape) for s in sampler.snoise_tmp]
         batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
-    tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+    # tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+    tmp_snoise = [sampler.exp.sample(s[:mb].shape) for s in sampler.snoise_tmp]
     batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
-    tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+    # tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+    tmp_snoise = [sampler.exp.sample(s[:mb].shape) for s in sampler.snoise_tmp]
     batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
     tmp_snoise = [s[:mb] for s in sampler.neutral_snoise]
@@ -63,7 +65,8 @@ def generate_and_save(H, imle, sampler, n_samp, subdir='fid'):
         temp_latent_rnds = sampler.exp.sample((H.imle_batch, H.latent_dim)).cuda()
         for i in range(0, n_samp // H.imle_batch):
             temp_latent_rnds = sampler.exp.sample((H.imle_batch, H.latent_dim)).cuda()
-            tmp_snoise = [s[:H.imle_batch].normal_() for s in sampler.snoise_tmp]
+            # tmp_snoise = [s[:H.imle_batch].normal_() for s in sampler.snoise_tmp]
+            tmp_snoise = [sampler.exp.sample(s[:H.imle_batch].shape) for s in sampler.snoise_tmp]
             samp = sampler.sample(temp_latent_rnds, imle, tmp_snoise)
             for j in range(H.imle_batch):
                 imageio.imwrite(f'{H.save_dir}/{subdir}/{i * H.imle_batch + j}.png', samp[j])
