@@ -43,6 +43,8 @@ def training_step_imle(H, n, targets, latents, snoise, imle, ema_imle, optimizer
 
 
 def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, logprint):
+    start_time = time.time()
+    fid_time_sum = 0
     subset_len = len(data_train)
     if H.subset_len != -1:
         subset_len = H.subset_len
@@ -132,7 +134,13 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
 
                 
 
-                comb_dataset = ZippedDataset(split_x, TensorDataset(sampler.selected_latents))
+                if epoch % H.imle_staleness == 0:
+                    new_selected_latents = sampler.selected_latents.clone()
+                else:
+                    new_selected_latents = sampler.sample_exp_init(sampler.selected_latents, new_rate=H.exp_rate).clone()
+                    # for i in range(len(sampler.selected_snoise)):
+                    #     sampler.selected_snoise[i].normal_()
+                comb_dataset = ZippedDataset(split_x, TensorDataset(new_selected_latents))
                 data_loader = DataLoader(comb_dataset, batch_size=H.n_batch, pin_memory=True, shuffle=True)
                 for cur, indices in data_loader:
                     x = cur[0]
@@ -146,7 +154,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     if iterate % H.iters_per_images == 0:
                         with torch.no_grad():
                             generate_images_initial(H, sampler, viz_batch_original,
-                                                    sampler.selected_latents[0: H.num_images_visualize],
+                                                    new_selected_latents[0: H.num_images_visualize],
                                                     [s[0: H.num_images_visualize] for s in sampler.selected_snoise],
                                                     viz_batch_original.shape, imle, ema_imle,
                                                     f'{H.save_dir}/samples-{iterate}.png', logprint)
@@ -177,6 +185,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                 }
 
                 if epoch % H.fid_freq == 0:
+                    fid_st_time = time.time()
                     generate_and_save(H, imle, sampler, subset_len * H.fid_factor)
                     print(f'{H.data_root}/img', f'{H.save_dir}/fid/')
                     cur_fid = fid.compute_fid(f'{H.data_root}/img', f'{H.save_dir}/fid/', verbose=False)
@@ -186,6 +195,11 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         fp = os.path.join(H.save_dir, 'best_fid')
                         logprint(f'Saving model best fid {best_fid} @ {iterate} to {fp}')
                         save_model(fp, imle, ema_imle, optimizer, H)
+                    fid_took = time.time() - fid_st_time
+                    fid_time_sum += fid_took
+                    running_time = time.time() - start_time - fid_time_sum
+                    metrics['running_time'] =  running_time / 60
+
 
                     metrics['fid'] = cur_fid
                     metrics['best_fid'] = best_fid

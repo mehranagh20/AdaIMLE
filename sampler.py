@@ -12,6 +12,7 @@ from dciknn_cuda import DCI, MDCI
 from torch.optim import AdamW
 from helpers.utils import ZippedDataset
 from models import parse_layer_string
+from torch.distributions.exponential import Exponential
 
 
 class Sampler:
@@ -19,11 +20,13 @@ class Sampler:
         self.pool_size = int(H.force_factor * sz)
         self.preprocess_fn = preprocess_fn
         self.l2_loss = torch.nn.MSELoss(reduce=False).cuda()
+        self.exp = Exponential(1)
         self.H = H
         self.latent_lr = H.latent_lr
         self.entire_ds = torch.arange(sz)
         self.selected_latents = torch.empty([sz, H.latent_dim], dtype=torch.float32)
         self.selected_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
+
 
         blocks = parse_layer_string(H.dec_blocks)
         self.block_res = [s[0] for s in blocks]
@@ -40,7 +43,8 @@ class Sampler:
         self.temp_samples = torch.empty([self.H.imle_db_size, H.image_channels, self.H.image_size, self.H.image_size],
                                         dtype=torch.float32)
 
-        self.pool_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
+        # self.pool_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
+        self.pool_latents = self.exp.sample((self.pool_size, H.latent_dim))
         self.sample_pool_usage = torch.ones([sz], dtype=torch.bool)
 
         self.projections = []
@@ -62,6 +66,11 @@ class Sampler:
         self.dataset_proj = torch.empty([sz, sum(dims)], dtype=torch.float32)
         self.pool_samples_proj = torch.empty([self.pool_size, sum(dims)], dtype=torch.float32)
         self.snoise_pool_samples_proj = torch.empty([sz * H.snoise_factor, sum(dims)], dtype=torch.float32)
+    
+    def sample_exp_init(self, new_orig, new_rate=1):
+        samp = self.exp.sample((new_orig.shape))
+        return new_orig + new_rate * samp
+
 
     def get_projected(self, inp, permute=True):
         if permute:
@@ -139,68 +148,9 @@ class Sampler:
                 dists[batch_slice] = torch.squeeze(dist)
         return dists
 
-    def imle_sample(self, dataset, gen, factor=None):
-        if factor is None:
-            factor = self.H.imle_factor
-        imle_pool_size = int(len(dataset) * factor)
-        t1 = time.time()
-        self.selected_dists_tmp[:] = self.selected_dists[:]
-        for i in range(imle_pool_size // self.H.imle_db_size):
-            self.temp_latent_rnds.normal_()
-            for j in range(len(self.res)):
-                self.snoise_tmp[j].normal_()
-            for j in range(self.H.imle_db_size // self.H.imle_batch):
-                batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
-                cur_latents = self.temp_latent_rnds[batch_slice]
-                cur_snoise = [x[batch_slice] for x in self.snoise_tmp]
-                with torch.no_grad():
-                    self.temp_samples[batch_slice] = gen(cur_latents, cur_snoise)
-                    self.temp_samples_proj[batch_slice] = self.get_projected(self.temp_samples[batch_slice], False)
-
-            if not gen.module.dci_db:
-                device_count = torch.cuda.device_count()
-                gen.module.dci_db = MDCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
-                                            num_simp_indices=self.H.num_simp_indices, devices=[i for i in range(device_count)], ts=device_count)
-
-                # gen.module.dci_db = DCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
-                                            # num_simp_indices=self.H.num_simp_indices)
-            gen.module.dci_db.add(self.temp_samples_proj)
-
-            t0 = time.time()
-            for ind, y in enumerate(DataLoader(dataset, batch_size=self.H.imle_batch)):
-                # t2 = time.time()
-                _, target = self.preprocess_fn(y)
-                x = self.dataset_proj[ind * self.H.imle_batch:ind * self.H.imle_batch + target.shape[0]]
-                cur_batch_data_flat = x.float()
-                nearest_indices, _ = gen.module.dci_db.query(cur_batch_data_flat, num_neighbours=1)
-                nearest_indices = nearest_indices.long()[:, 0]
-
-                batch_slice = slice(ind * self.H.imle_batch, ind * self.H.imle_batch + x.size()[0])
-                actual_selected_dists = self.calc_loss(target.permute(0, 3, 1, 2),
-                                                       self.temp_samples[nearest_indices].cuda(), use_mean=False)
-                # actual_selected_dists = torch.squeeze(actual_selected_dists)
-
-                to_update = torch.nonzero(actual_selected_dists < self.selected_dists[batch_slice], as_tuple=False)
-                to_update = torch.squeeze(to_update)
-                self.selected_dists[ind * self.H.imle_batch + to_update] = actual_selected_dists[to_update].clone()
-                self.selected_latents[ind * self.H.imle_batch + to_update] = self.temp_latent_rnds[nearest_indices[to_update]].clone()
-                for k in range(len(self.res)):
-                    self.selected_snoise[k][ind * self.H.imle_batch + to_update] = self.snoise_tmp[k][nearest_indices[to_update]].clone()
-
-                del cur_batch_data_flat
-
-            gen.module.dci_db.clear()
-
-        # adding perturbation
-        changed = torch.sum(self.selected_dists_tmp != self.selected_dists).item()
-        print("Samples and NN are calculated, time: {}, mean: {} # changed: {}, {}%".format(time.time() - t1,
-                                                                                            self.selected_dists.mean(),
-                                                                                            changed, (changed / len(
-                dataset)) * 100))
-
     def resample_pool(self, gen, ds):
         # self.init_projection(ds)
-        self.pool_latents.normal_()
+        self.pool_latents[:] = self.exp.sample((self.pool_size, self.H.latent_dim)) 
         for i in range(len(self.res)):
             self.snoise_pool[i].normal_()
 
@@ -261,7 +211,8 @@ class Sampler:
                 if i % 100 == 0:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
 
-
+                    
+                    
         if self.H.latent_epoch > 0:
             for param in gen.parameters():
                 param.requires_grad = False
@@ -290,3 +241,4 @@ class Sampler:
             for param in gen.parameters():
                 param.requires_grad = True
         self.latent_lr = self.latent_lr * (1 - self.H.latent_decay)
+

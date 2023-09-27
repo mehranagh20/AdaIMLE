@@ -30,9 +30,10 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
     initial = initial[:mb]
     batches = [orig[:mb], sampler.sample(initial, imle, snoise)]
 
-    temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+    # temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+    temp_latent_rnds = sampler.exp.sample((mb, H.latent_dim)).cuda()
     for t in range(H.num_rows_visualize):
-        temp_latent_rnds.normal_()
+        temp_latent_rnds = sampler.exp.sample((mb, H.latent_dim)).cuda()
         tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
         batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
@@ -46,7 +47,7 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
     batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
     tmp_snoise = [s[:mb] for s in sampler.neutral_snoise]
-    temp_latent_rnds.normal_()
+    temp_latent_rnds = sampler.exp.sample((mb, H.latent_dim)).cuda()
     batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
     n_rows = len(batches)
@@ -58,9 +59,10 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
 
 def generate_and_save(H, imle, sampler, n_samp, subdir='fid'):
     with torch.no_grad():
-        temp_latent_rnds = torch.randn([H.imle_batch, H.latent_dim], dtype=torch.float32).cuda()
+        # temp_latent_rnds = torch.randn([H.imle_batch, H.latent_dim], dtype=torch.float32).cuda()
+        temp_latent_rnds = sampler.exp.sample((H.imle_batch, H.latent_dim)).cuda()
         for i in range(0, n_samp // H.imle_batch):
-            temp_latent_rnds.normal_()
+            temp_latent_rnds = sampler.exp.sample((H.imle_batch, H.latent_dim)).cuda()
             tmp_snoise = [s[:H.imle_batch].normal_() for s in sampler.snoise_tmp]
             samp = sampler.sample(temp_latent_rnds, imle, tmp_snoise)
             for j in range(H.imle_batch):

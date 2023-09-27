@@ -118,4 +118,5 @@ def add_imle_arguments(parser):
     parser.add_argument('--ppl_save_name', type=str, default='ppl')
     parser.add_argument("--fid_factor", type=int, default=5, help="number of the samples for calculating FID")
     parser.add_argument("--fid_freq", type=int, default=5, help="frequency of calculating fid")
+    parser.add_argument("--exp_rate", type=float, default=0.1, help="frequency of calculating fid")
     return parser
