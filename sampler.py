@@ -1,5 +1,4 @@
 from curses import update_lines_cols
-from math import comb
 import time
 
 import numpy as np
@@ -265,7 +264,7 @@ class Sampler:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
 
 
-        self.selected_latents[to_update] = self.updatable_latents_tmp[to_update].detach()
+        self.selected_latents[to_update] = self.selected_latents_tmp[to_update].clone()
         self.pool_latents[self.selected_indices[to_update]].normal_()
         for i in range(len(self.res)):
             self.snoise_pool[i][self.selected_indices[to_update]].normal_()
