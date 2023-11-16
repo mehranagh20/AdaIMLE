@@ -25,6 +25,7 @@ from visual.spatial_visual import spatial_vissual
 from visual.utils import (generate_and_save, generate_for_NN,
                           generate_images_initial,
                           get_sample_for_visualization)
+from torch.optim.lr_scheduler import LambdaLR
 
 
 def training_step_imle(H, n, targets, latents, snoise, imle, ema_imle, optimizer, loss_fn):
@@ -41,6 +42,26 @@ def training_step_imle(H, n, targets, latents, snoise, imle, ema_imle, optimizer
     stats.update(skipped_updates=0, iter_time=time.time() - t0, grad_norm=0)
     return stats
 
+class DecayLR:
+    def __init__(self, tmax=100000):
+        self.tmax = int(tmax)
+        assert self.tmax > 0
+        self.lr_step = (0 - 1) / self.tmax
+
+    def step(self, step):
+        lr = 1 + self.lr_step * step
+        lr = max(1e-6, min(1.0, lr))
+        return lr
+
+def get_lrschedule(args, optimizer):
+    if args.lr_schedule:
+        scheduler = DecayLR(tmax=args.num_steps)
+        lr_scheduler = LambdaLR(optimizer, lambda x: scheduler.step(x))
+    else:
+        lr_scheduler = LambdaLR(optimizer, lambda x: 1.0)
+    return lr_scheduler
+
+
 
 def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, logprint):
     subset_len = len(data_train)
@@ -51,6 +72,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
         break
 
     optimizer, scheduler, _, iterate, _ = load_opt(H, imle, logprint)
+    lr_scheduler = get_lrschedule(H, optimizer)
 
     stats = []
     H.ema_rate = torch.as_tensor(H.ema_rate)
@@ -141,7 +163,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     cur_snoise = [s[indices] for s in sampler.selected_snoise]
                     stat = training_step_imle(H, target.shape[0], target, latents, cur_snoise, imle, ema_imle, optimizer, sampler.calc_loss)
                     stats.append(stat)
-                    scheduler.step()
+                    # scheduler.step()
+                    lr_scheduler.step()
 
                     if iterate % H.iters_per_images == 0:
                         with torch.no_grad():
