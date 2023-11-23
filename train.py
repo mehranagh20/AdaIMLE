@@ -43,23 +43,30 @@ def training_step_imle(H, n, targets, latents, snoise, imle, ema_imle, optimizer
     return stats
 
 class DecayLR:
-    def __init__(self, tmax=100000):
+    def __init__(self, tmax=100000, staleness=10):
         self.tmax = int(tmax)
+        self.staleness = staleness
         assert self.tmax > 0
         self.lr_step = (0 - 1) / self.tmax
 
     def step(self, step):
+        per = step % self.staleness
         lr = 1 + self.lr_step * step
+        lr = lr + ((0 - 1) / self.staleness) * per
         lr = max(1e-6, min(1.0, lr))
         return lr
 
 def get_lrschedule(args, optimizer):
-    if args.lr_schedule:
-        scheduler = DecayLR(tmax=args.num_steps)
-        lr_scheduler = LambdaLR(optimizer, lambda x: scheduler.step(x))
-    else:
-        lr_scheduler = LambdaLR(optimizer, lambda x: 1.0)
-    return lr_scheduler
+    # if args.lr_schedule:
+    #     scheduler = DecayLR(tmax=args.num_steps)
+    #     lr_scheduler = LambdaLR(optimizer, lambda x: scheduler.step(x))
+    # else:
+    #     lr_scheduler = LambdaLR(optimizer, lambda x: 1.0)
+    # return lr_scheduler
+    scheduler = DecayLR(tmax=args.num_steps, staleness=args.imle_staleness)
+    return LambdaLR(optimizer, lambda x: scheduler.step(x))
+    # return LambdaLR(optimizer, lambda x: 1.0)
+    
 
 
 
@@ -163,8 +170,6 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     cur_snoise = [s[indices] for s in sampler.selected_snoise]
                     stat = training_step_imle(H, target.shape[0], target, latents, cur_snoise, imle, ema_imle, optimizer, sampler.calc_loss)
                     stats.append(stat)
-                    # scheduler.step()
-                    lr_scheduler.step()
 
                     if iterate % H.iters_per_images == 0:
                         with torch.no_grad():
@@ -188,6 +193,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         save_latents(H, iterate, split_ind, change_thresholds, name='threshold')
                         save_snoise(H, iterate, sampler.selected_snoise)
 
+                lr_scheduler.step()
+
                 cur_dists = torch.empty([subset_len], dtype=torch.float32).cuda()
                 cur_dists[:] = sampler.calc_dists_existing(split_x_tensor, imle, dists=cur_dists)
                 torch.save(cur_dists, f'{H.save_dir}/latent/dists-{epoch}.npy')
@@ -197,6 +204,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     'std_loss': torch.std(cur_dists).item(),
                     'max_loss': torch.max(cur_dists).item(),
                     'min_loss': torch.min(cur_dists).item(),
+                    'epoch': epoch,
                 }
 
                 if epoch % H.fid_freq == 0:
@@ -214,7 +222,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     metrics['best_fid'] = best_fid
                     
 
-                logprint(model=H.desc, type='train_loss', epoch=epoch, step=iterate, **metrics)
+                logprint(model=H.desc, type='train_loss', step=iterate, **metrics)
 
                 if H.use_wandb:
                     wandb.log(metrics, step=iterate)

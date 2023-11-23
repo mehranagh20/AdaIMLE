@@ -246,7 +246,7 @@ class Sampler:
                     indices = to_update[batch_slice]
                     x = self.dataset_proj[indices]
                     nearest_indices, dci_dists = gen.module.dci_db.query(x.float(), num_neighbours=1)
-                    nearest_indices = nearest_indices.long()[:, 0]
+                    nearest_indices = nearest_indices.long()[:, 0].cpu()
                     dci_dists = dci_dists[:, 0]
 
                     need_update = dci_dists < self.selected_dists_tmp[indices]
