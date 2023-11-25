@@ -212,7 +212,7 @@ class Sampler:
                     global_need_update = indices[need_update]
 
                     real_nearest_indices = nearest_indices[need_update] + pool_slice.start
-                    self.selected_indices[global_need_update] = nearest_indices[real_nearest_indices].clone()
+                    self.selected_indices[global_need_update] = real_nearest_indices.clone()
 
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].clone()
                     self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone() + self.H.imle_perturb_coef * torch.randn((need_update.sum(), self.H.latent_dim))
