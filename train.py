@@ -79,7 +79,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
         break
 
     optimizer, scheduler, _, iterate, _ = load_opt(H, imle, logprint)
-    lr_scheduler = get_lrschedule(H, optimizer)
+    # lr_scheduler = get_lrschedule(H, optimizer)
+    lr_scheduler = scheduler
 
     stats = []
     H.ema_rate = torch.as_tensor(H.ema_rate)
@@ -172,6 +173,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     cur_snoise = [s[indices] for s in sampler.selected_snoise]
                     stat = training_step_imle(H, target.shape[0], target, latents, cur_snoise, imle, ema_imle, optimizer, sampler.calc_loss)
                     stats.append(stat)
+                    scheduler.step()
 
                     if iterate % H.iters_per_images == 0:
                         with torch.no_grad():
@@ -195,7 +197,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         save_latents(H, iterate, split_ind, change_thresholds, name='threshold')
                         save_snoise(H, iterate, sampler.selected_snoise)
 
-                lr_scheduler.step()
+                # lr_scheduler.step()
 
                 cur_dists = torch.empty([subset_len], dtype=torch.float32).cuda()
                 cur_dists[:] = sampler.calc_dists_existing(split_x_tensor, imle, dists=cur_dists)
