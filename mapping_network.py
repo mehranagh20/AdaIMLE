@@ -62,7 +62,7 @@ class MappingNetowrk(nn.Module):
     def __init__(self, code_dim=512, n_mlp=8):
         super().__init__()
 
-        layers = [PixelNorm()]
+        layers = []
         for i in range(n_mlp):
             layers.append(EqualLinear(code_dim, code_dim))
             layers.append(nn.LeakyReLU(0.2))
