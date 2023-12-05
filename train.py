@@ -26,6 +26,7 @@ from visual.utils import (generate_and_save, generate_for_NN,
                           generate_images_initial,
                           get_sample_for_visualization)
 from torch.optim.lr_scheduler import LambdaLR
+from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 
 
 def training_step_imle(H, n, targets, latents, snoise, imle, ema_imle, optimizer, loss_fn):
@@ -96,6 +97,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
     change_thresholds = torch.empty(subset_len).cuda()
     change_thresholds[:] = H.change_threshold
     best_fid = 100000
+
+    loss_fn = LearnedPerceptualImagePatchSimilarity(net_type='squeeze').cuda()
 
 
     epoch = -1
@@ -171,7 +174,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     latents = cur[1][0]
                     _, target = preprocess_fn(x)
                     cur_snoise = [s[indices] for s in sampler.selected_snoise]
-                    stat = training_step_imle(H, target.shape[0], target, latents, cur_snoise, imle, ema_imle, optimizer, sampler.calc_loss)
+                    # stat = training_step_imle(H, target.shape[0], target, latents, cur_snoise, imle, ema_imle, optimizer, sampler.calc_loss)
+                    stat = training_step_imle(H, target.shape[0], target, latents, cur_snoise, imle, ema_imle, optimizer, loss_fn)
                     stats.append(stat)
                     scheduler.step()
 
