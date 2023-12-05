@@ -112,6 +112,7 @@ class Decoder(nn.Module):
         self.resnet = get_1x1(H.width, H.image_channels)
         self.gain = nn.Parameter(torch.ones(1, H.image_channels, 1, 1))
         self.bias = nn.Parameter(torch.zeros(1, H.image_channels, 1, 1))
+        self.tahn = nn.Tanh()
 
     def forward(self, latent_code, spatial_noise, input_is_w=False):
         if not input_is_w:
@@ -129,7 +130,8 @@ class Decoder(nn.Module):
             x = block(x, w, noise)
         x = self.resnet(x)
         x = self.gain * x + self.bias
-        return x
+        # between -1 and 1
+        return self.tahn(x)
 
 
 class IMLE(nn.Module):
