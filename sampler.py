@@ -1,5 +1,4 @@
 from curses import update_lines_cols
-from math import comb
 import time
 
 import numpy as np
@@ -23,6 +22,7 @@ class Sampler:
         self.latent_lr = H.latent_lr
         self.entire_ds = torch.arange(sz)
         self.selected_latents = torch.empty([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_indices = torch.empty([sz], dtype=torch.int64)
         self.selected_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
 
         blocks = parse_layer_string(H.dec_blocks)
@@ -62,6 +62,7 @@ class Sampler:
         self.dataset_proj = torch.empty([sz, sum(dims)], dtype=torch.float32)
         self.pool_samples_proj = torch.empty([self.pool_size, sum(dims)], dtype=torch.float32)
         self.snoise_pool_samples_proj = torch.empty([sz * H.snoise_factor, sum(dims)], dtype=torch.float32)
+        self.pool_last_updated = torch.zeros([self.pool_size], dtype=torch.int64)
 
     def get_projected(self, inp, permute=True):
         if permute:
@@ -139,93 +140,52 @@ class Sampler:
                 dists[batch_slice] = torch.squeeze(dist)
         return dists
 
-    def imle_sample(self, dataset, gen, factor=None):
-        if factor is None:
-            factor = self.H.imle_factor
-        imle_pool_size = int(len(dataset) * factor)
-        t1 = time.time()
-        self.selected_dists_tmp[:] = self.selected_dists[:]
-        for i in range(imle_pool_size // self.H.imle_db_size):
-            self.temp_latent_rnds.normal_()
-            for j in range(len(self.res)):
-                self.snoise_tmp[j].normal_()
-            for j in range(self.H.imle_db_size // self.H.imle_batch):
-                batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
-                cur_latents = self.temp_latent_rnds[batch_slice]
-                cur_snoise = [x[batch_slice] for x in self.snoise_tmp]
-                with torch.no_grad():
-                    self.temp_samples[batch_slice] = gen(cur_latents, cur_snoise)
-                    self.temp_samples_proj[batch_slice] = self.get_projected(self.temp_samples[batch_slice], False)
+    def resample_pool(self, gen, to_update, rnd=True):
+        self.pool_last_updated[to_update] = 0
+        if rnd:
+            self.pool_latents[to_update].normal_()
+            for i in range(len(self.res)):
+                self.snoise_pool[i][to_update].normal_()
 
-            if not gen.module.dci_db:
-                device_count = torch.cuda.device_count()
-                gen.module.dci_db = MDCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
-                                            num_simp_indices=self.H.num_simp_indices, devices=[i for i in range(device_count)], ts=device_count)
+        for j in range(to_update.shape[0] // self.H.imle_batch + 1):
+            sl = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
+            batch_slice = to_update[sl]
+            if batch_slice.shape[0] == 0:
+                continue
 
-                # gen.module.dci_db = DCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
-                                            # num_simp_indices=self.H.num_simp_indices)
-            gen.module.dci_db.add(self.temp_samples_proj)
-
-            t0 = time.time()
-            for ind, y in enumerate(DataLoader(dataset, batch_size=self.H.imle_batch)):
-                # t2 = time.time()
-                _, target = self.preprocess_fn(y)
-                x = self.dataset_proj[ind * self.H.imle_batch:ind * self.H.imle_batch + target.shape[0]]
-                cur_batch_data_flat = x.float()
-                nearest_indices, _ = gen.module.dci_db.query(cur_batch_data_flat, num_neighbours=1)
-                nearest_indices = nearest_indices.long()[:, 0]
-
-                batch_slice = slice(ind * self.H.imle_batch, ind * self.H.imle_batch + x.size()[0])
-                actual_selected_dists = self.calc_loss(target.permute(0, 3, 1, 2),
-                                                       self.temp_samples[nearest_indices].cuda(), use_mean=False)
-                # actual_selected_dists = torch.squeeze(actual_selected_dists)
-
-                to_update = torch.nonzero(actual_selected_dists < self.selected_dists[batch_slice], as_tuple=False)
-                to_update = torch.squeeze(to_update)
-                self.selected_dists[ind * self.H.imle_batch + to_update] = actual_selected_dists[to_update].clone()
-                self.selected_latents[ind * self.H.imle_batch + to_update] = self.temp_latent_rnds[nearest_indices[to_update]].clone()
-                for k in range(len(self.res)):
-                    self.selected_snoise[k][ind * self.H.imle_batch + to_update] = self.snoise_tmp[k][nearest_indices[to_update]].clone()
-
-                del cur_batch_data_flat
-
-            gen.module.dci_db.clear()
-
-        # adding perturbation
-        changed = torch.sum(self.selected_dists_tmp != self.selected_dists).item()
-        print("Samples and NN are calculated, time: {}, mean: {} # changed: {}, {}%".format(time.time() - t1,
-                                                                                            self.selected_dists.mean(),
-                                                                                            changed, (changed / len(
-                dataset)) * 100))
-
-    def resample_pool(self, gen, ds):
-        # self.init_projection(ds)
-        self.pool_latents.normal_()
-        for i in range(len(self.res)):
-            self.snoise_pool[i].normal_()
-
-        for j in range(self.pool_size // self.H.imle_batch):
-            batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
             cur_latents = self.pool_latents[batch_slice]
             cur_snosie = [s[batch_slice] for s in self.snoise_pool]
             with torch.no_grad():
-                self.pool_samples_proj[batch_slice] = self.get_projected(gen(cur_latents, cur_snosie), False)
+                self.pool_samples_proj[batch_slice] = self.get_projected(gen(cur_latents, cur_snosie), False).cpu()
+                # self.get_projected(gen(cur_latents, cur_snosie), False)
+
 
     def imle_sample_force(self, dataset, gen, to_update=None):
+        self.pool_last_updated += 1
         if to_update is None:
             to_update = self.entire_ds
+            # resample all pool
+            self.resample_pool(gen, torch.arange(self.pool_size))
         if to_update.shape[0] == 0:
             return
+        
+        pool_acceptable_stal = self.H.pool_staleness
+        # resample those that are too old
+        pool_old_indices = torch.where(self.pool_last_updated > pool_acceptable_stal)[0]
+        self.resample_pool(gen, pool_old_indices, rnd=False)
 
         t1 = time.time()
         print(torch.any(self.sample_pool_usage[to_update]), torch.any(self.sample_pool_usage))
-        if torch.any(self.sample_pool_usage[to_update]):
-            self.resample_pool(gen, dataset)
-            self.sample_pool_usage[:] = False
-            print(f'resampling took {time.time() - t1}')
+        # if torch.any(self.sample_pool_usage[to_update]):
+        #     self.resample_pool(gen, dataset)
+        #     self.sample_pool_usage[:] = False
+        #     print(f'resampling took {time.time() - t1}')
+        # to_update_indices = self.selected_indices[to_update]
+        # self.resample_pool(gen, to_update_indices)
 
         self.selected_dists_tmp[:] = np.inf
         self.sample_pool_usage[to_update] = True
+        
 
         with torch.no_grad():
             for i in range(self.pool_size // self.H.imle_db_size):
@@ -245,11 +205,14 @@ class Sampler:
                     indices = to_update[batch_slice]
                     x = self.dataset_proj[indices]
                     nearest_indices, dci_dists = gen.module.dci_db.query(x.float(), num_neighbours=1)
-                    nearest_indices = nearest_indices.long()[:, 0]
+                    nearest_indices = nearest_indices.long()[:, 0].cpu()
                     dci_dists = dci_dists[:, 0]
 
                     need_update = dci_dists < self.selected_dists_tmp[indices]
                     global_need_update = indices[need_update]
+
+                    real_nearest_indices = nearest_indices[need_update] + pool_slice.start
+                    self.selected_indices[global_need_update] = real_nearest_indices.clone()
 
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].clone()
                     self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone() + self.H.imle_perturb_coef * torch.randn((need_update.sum(), self.H.latent_dim))
@@ -262,29 +225,13 @@ class Sampler:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
 
 
-        if self.H.latent_epoch > 0:
-            for param in gen.parameters():
-                param.requires_grad = False
-        updatable_latents = self.selected_latents_tmp[to_update].clone().requires_grad_(True)
-        latent_optimizer = AdamW([updatable_latents], lr=self.latent_lr)
-        comb_dataset = ZippedDataset(TensorDataset(dataset[to_update]), TensorDataset(updatable_latents))
+        self.selected_latents[to_update] = self.selected_latents_tmp[to_update].clone()
+        # self.pool_latents[self.selected_indices[to_update]].normal_()
+        # for i in range(len(self.res)):
+            # self.snoise_pool[i][self.selected_indices[to_update]].normal_()
 
-        for gd_epoch in range(self.H.latent_epoch):
-            losses = []
-            for cur, _ in DataLoader(comb_dataset, batch_size=self.H.n_batch):
-                x = cur[0]
-                latents = cur[1][0]
-                _, target = self.preprocess_fn(x)
-                gen.zero_grad()
-                px_z = gen(latents)  # TODO fix this
-                loss = self.calc_loss(px_z, target.permute(0, 3, 1, 2))
-                loss.backward()
-                latent_optimizer.step()
-                updatable_latents.grad.zero_()
-
-                losses.append(loss.detach())
-            print('avg loss', gd_epoch, sum(losses) / len(losses))
-        self.selected_latents[to_update] = updatable_latents.detach().clone()
+        to_update_indices = self.selected_indices[to_update].cuda()
+        self.resample_pool(gen, to_update_indices)
 
         if self.H.latent_epoch > 0:
             for param in gen.parameters():

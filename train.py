@@ -25,6 +25,7 @@ from visual.spatial_visual import spatial_vissual
 from visual.utils import (generate_and_save, generate_for_NN,
                           generate_images_initial,
                           get_sample_for_visualization)
+from torch.optim.lr_scheduler import LambdaLR
 
 
 def training_step_imle(H, n, targets, latents, snoise, imle, ema_imle, optimizer, loss_fn):
@@ -41,6 +42,33 @@ def training_step_imle(H, n, targets, latents, snoise, imle, ema_imle, optimizer
     stats.update(skipped_updates=0, iter_time=time.time() - t0, grad_norm=0)
     return stats
 
+class DecayLR:
+    def __init__(self, tmax=100000, staleness=10):
+        self.tmax = int(tmax)
+        self.staleness = staleness
+        assert self.tmax > 0
+        self.lr_step = (0 - 1) / self.tmax
+
+    def step(self, step):
+        per = step % self.staleness
+        lr = 1 + self.lr_step * step
+        lr = lr + ((0 - 1) / self.staleness) * per
+        lr = max(1e-6, min(1.0, lr))
+        return lr
+
+def get_lrschedule(args, optimizer):
+    # if args.lr_schedule:
+    #     scheduler = DecayLR(tmax=args.num_steps)
+    #     lr_scheduler = LambdaLR(optimizer, lambda x: scheduler.step(x))
+    # else:
+    #     lr_scheduler = LambdaLR(optimizer, lambda x: 1.0)
+    # return lr_scheduler
+    scheduler = DecayLR(tmax=args.num_steps, staleness=args.imle_staleness)
+    return LambdaLR(optimizer, lambda x: scheduler.step(x))
+    # return LambdaLR(optimizer, lambda x: 1.0)
+    
+
+
 
 def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, logprint):
     subset_len = len(data_train)
@@ -51,6 +79,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
         break
 
     optimizer, scheduler, _, iterate, _ = load_opt(H, imle, logprint)
+    # lr_scheduler = get_lrschedule(H, optimizer)
+    lr_scheduler = scheduler
 
     stats = []
     H.ema_rate = torch.as_tensor(H.ema_rate)
@@ -89,6 +119,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                 in_threshold = torch.logical_and(dists_in_threshold, updated_enough)
                 all_conditions = torch.logical_or(in_threshold, updated_too_much)
                 to_update = torch.nonzero(all_conditions, as_tuple=False).squeeze(1)
+                change_thresholds[to_update] = sampler.selected_dists[to_update].clone() * (1 - H.change_coef)
 
                 if epoch == 0:
                     if os.path.isfile(str(H.restore_latent_path)):
@@ -109,20 +140,21 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         change_thresholds[:] = threshold[:]
                         print('loaded thresholds', torch.mean(change_thresholds))
                     else:
-                        to_update = sampler.entire_ds
+                        to_update = None
 
 
-                change_thresholds[to_update] = sampler.selected_dists[to_update].clone() * (1 - H.change_coef)
 
+                print(to_update)
                 sampler.imle_sample_force(split_x_tensor, imle, to_update)
 
-                last_updated[to_update] = 0
-                times_updated[to_update] = times_updated[to_update] + 1
+                if to_update is not None:
+                    last_updated[to_update] = 0
+                    times_updated[to_update] = times_updated[to_update] + 1
 
                 save_latents_latest(H, split_ind, sampler.selected_latents)
                 save_latents_latest(H, split_ind, change_thresholds, name='threshold_latest')
 
-                if to_update.shape[0] >= H.num_images_visualize:
+                if to_update is not None and to_update.shape[0] >= H.num_images_visualize:
                     latents = sampler.selected_latents[to_update[:H.num_images_visualize]]
                     with torch.no_grad():
                         generate_for_NN(sampler, split_x_tensor[to_update[:H.num_images_visualize]], latents,
@@ -165,6 +197,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         save_latents(H, iterate, split_ind, change_thresholds, name='threshold')
                         save_snoise(H, iterate, sampler.selected_snoise)
 
+                # lr_scheduler.step()
+
                 cur_dists = torch.empty([subset_len], dtype=torch.float32).cuda()
                 cur_dists[:] = sampler.calc_dists_existing(split_x_tensor, imle, dists=cur_dists)
                 torch.save(cur_dists, f'{H.save_dir}/latent/dists-{epoch}.npy')
@@ -174,6 +208,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     'std_loss': torch.std(cur_dists).item(),
                     'max_loss': torch.max(cur_dists).item(),
                     'min_loss': torch.min(cur_dists).item(),
+                    'epoch': epoch,
                 }
 
                 if epoch % H.fid_freq == 0:
@@ -191,7 +226,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     metrics['best_fid'] = best_fid
                     
 
-                logprint(model=H.desc, type='train_loss', epoch=epoch, step=iterate, **metrics)
+                logprint(model=H.desc, type='train_loss', step=iterate, **metrics)
 
                 if H.use_wandb:
                     wandb.log(metrics, step=iterate)
