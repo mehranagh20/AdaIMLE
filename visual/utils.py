@@ -41,7 +41,9 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
     for i in range(4):
         second_latent_rnds.normal_()
         batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, second_latent_code=second_latent_rnds))
-
+        
+    second_latent_rnds.zero_()
+    batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, second_latent_code=second_latent_rnds))
 
     n_rows = len(batches)
     im = np.concatenate(batches, axis=0).reshape((n_rows, mb, *shape[1:])).transpose([0, 2, 1, 3, 4]).reshape(
