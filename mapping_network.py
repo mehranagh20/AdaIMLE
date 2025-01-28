@@ -66,7 +66,10 @@ class MappingNetowrk(nn.Module):
         for i in range(n_mlp):
             layers.append(EqualLinear(code_dim, code_dim))
             layers.append(nn.LeakyReLU(0.2))
-
+        layers.append(EqualLinear(code_dim, code_dim * 2))
+        layers.append(nn.LeakyReLU(0.2))
+        layers.append(EqualLinear(code_dim * 2, code_dim * 2))
+        # layers.append(nn.LeakyReLU(0.2)) # TODO: try this out
         self.style = nn.Sequential(*layers)
 
     def forward(
@@ -87,30 +90,11 @@ class MappingNetowrk(nn.Module):
             x = self.style(i)
             styles.append(x)
 
-        # batch = input[0].shape[0]
-        #
-        # if noise is None:
-        #     noise = []
-        #
-        #     for i in range(step + 1):
-        #         size = 4 * 2 ** i
-        #         noise.append(torch.randn(batch, 1, size, size, device=input[0].device))
-
-        # if mean_style is not None:
-        #     styles_norm = []
-        #
-        #     for style in styles:
-        #         styles_norm.append(mean_style + style_weight * (style - mean_style))
-        #
-        #     styles = styles_norm
-
-        return styles
+        mean, std = styles[-1].chunk(2, dim=1)
+        # return styles
+        return mean, std
 
     # def mean_style(self, input):
-    #     style = self.style(input).mean(0, keepdim=True)
-    #
-    #     return style
-
 
 class AdaptiveInstanceNorm(nn.Module):
     def __init__(self, in_channel, style_dim):

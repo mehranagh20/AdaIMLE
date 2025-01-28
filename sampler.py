@@ -82,14 +82,14 @@ class Sampler:
             batch_slice = slice(ind * self.H.n_batch, ind * self.H.n_batch + x[0].shape[0])
             self.dataset_proj[batch_slice] = self.get_projected(self.preprocess_fn(x)[1])
 
-    def sample(self, latents, gen, snoise=None):
+    def sample(self, latents, gen, snoise=None, second_latent_code=None):
         with torch.no_grad():
             nm = latents.shape[0]
             if snoise is None:
                 for i in range(len(self.res)):
                     self.snoise_tmp[i].normal_()
                 snoise = [s[:nm] for s in self.snoise_tmp]
-            px_z = gen(latents, snoise).permute(0, 2, 3, 1)
+            px_z = gen(latents, snoise, second_latent_code=second_latent_code).permute(0, 2, 3, 1)
             xhat = (px_z + 1.0) * 127.5
             xhat = xhat.detach().cpu().numpy()
             xhat = np.minimum(np.maximum(0.0, xhat), 255.0).astype(np.uint8)
@@ -159,11 +159,11 @@ class Sampler:
 
             if not gen.module.dci_db:
                 device_count = torch.cuda.device_count()
-                gen.module.dci_db = MDCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
-                                            num_simp_indices=self.H.num_simp_indices, devices=[i for i in range(device_count)], ts=device_count)
+                # gen.module.dci_db = MDCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
+                #                             num_simp_indices=self.H.num_simp_indices, devices=[i for i in range(device_count)], ts=device_count)
 
-                # gen.module.dci_db = DCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
-                                            # num_simp_indices=self.H.num_simp_indices)
+                gen.module.dci_db = DCI(self.temp_samples_proj.shape[1], num_comp_indices=self.H.num_comp_indices,
+                                            num_simp_indices=self.H.num_simp_indices)
             gen.module.dci_db.add(self.temp_samples_proj)
 
             t0 = time.time()
