@@ -115,7 +115,7 @@ class Decoder(nn.Module):
 
     def forward(self, latent_code, spatial_noise, input_is_w=False, second_latent_code=None):
         mean, std = self.mapping_network(latent_code)
-        w_latent = latent_code
+        w_latent = torch.randn_like(latent_code)
         if second_latent_code is not None:
             w_latent = second_latent_code
         w = mean + std * w_latent
