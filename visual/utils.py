@@ -31,15 +31,21 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
     batches = [orig[:mb], sampler.sample(initial, imle, snoise)]
 
     temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+    second_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
     for t in range(H.num_rows_visualize):
         temp_latent_rnds.normal_()
         tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
         batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
-    temp_latent_rnds.normal_()
-    for i in range(5):
-        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
+    for i in range(4):
+        tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+        second_latent_rnds.normal_()
+        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, second_latent_code=second_latent_rnds))
         
+    tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+    second_latent_rnds.zero_()
+    batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, second_latent_code=second_latent_rnds))
+
     n_rows = len(batches)
     im = np.concatenate(batches, axis=0).reshape((n_rows, mb, *shape[1:])).transpose([0, 2, 1, 3, 4]).reshape(
         [n_rows * shape[1], mb * shape[2], 3])
