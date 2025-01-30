@@ -91,8 +91,8 @@ class MappingNetowrk(nn.Module):
             styles.append(x)
 
         mean, logstd = styles[-1].chunk(2, dim=1)
-        # Convert logstd to constrained std
-        std = torch.sigmoid(logstd)  # This ensures std is between 0 and 1
+        # Convert logstd to constrained std using tanh
+        std = torch.exp(logstd)
         return mean, std
 
     # def mean_style(self, input):
