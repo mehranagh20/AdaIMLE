@@ -24,6 +24,8 @@ class Sampler:
         self.entire_ds = torch.arange(sz)
         self.selected_latents = torch.empty([sz, H.latent_dim], dtype=torch.float32)
         self.selected_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_second_latents = torch.empty([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_second_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
 
         blocks = parse_layer_string(H.dec_blocks)
         self.block_res = [s[0] for s in blocks]
@@ -41,6 +43,7 @@ class Sampler:
                                         dtype=torch.float32)
 
         self.pool_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
+        self.pool_second_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
         self.sample_pool_usage = torch.ones([sz], dtype=torch.bool)
 
         self.projections = []
@@ -147,14 +150,16 @@ class Sampler:
         self.selected_dists_tmp[:] = self.selected_dists[:]
         for i in range(imle_pool_size // self.H.imle_db_size):
             self.temp_latent_rnds.normal_()
+            temp_second_latents = torch.randn_like(self.temp_latent_rnds)
             for j in range(len(self.res)):
                 self.snoise_tmp[j].normal_()
             for j in range(self.H.imle_db_size // self.H.imle_batch):
                 batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
                 cur_latents = self.temp_latent_rnds[batch_slice]
+                cur_second_latents = temp_second_latents[batch_slice]
                 cur_snoise = [x[batch_slice] for x in self.snoise_tmp]
                 with torch.no_grad():
-                    self.temp_samples[batch_slice] = gen(cur_latents, cur_snoise)
+                    self.temp_samples[batch_slice] = gen(cur_latents, cur_snoise, second_latent_code=cur_second_latents)
                     self.temp_samples_proj[batch_slice] = self.get_projected(self.temp_samples[batch_slice], False)
 
             if not gen.module.dci_db:
@@ -184,6 +189,7 @@ class Sampler:
                 to_update = torch.squeeze(to_update)
                 self.selected_dists[ind * self.H.imle_batch + to_update] = actual_selected_dists[to_update].clone()
                 self.selected_latents[ind * self.H.imle_batch + to_update] = self.temp_latent_rnds[nearest_indices[to_update]].clone()
+                self.selected_second_latents[ind * self.H.imle_batch + to_update] = temp_second_latents[nearest_indices[to_update]].clone()
                 for k in range(len(self.res)):
                     self.selected_snoise[k][ind * self.H.imle_batch + to_update] = self.snoise_tmp[k][nearest_indices[to_update]].clone()
 
@@ -201,15 +207,20 @@ class Sampler:
     def resample_pool(self, gen, ds):
         # self.init_projection(ds)
         self.pool_latents.normal_()
+        self.pool_second_latents.normal_()
         for i in range(len(self.res)):
             self.snoise_pool[i].normal_()
 
         for j in range(self.pool_size // self.H.imle_batch):
             batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
             cur_latents = self.pool_latents[batch_slice]
+            cur_second_latents = self.pool_second_latents[batch_slice]
             cur_snosie = [s[batch_slice] for s in self.snoise_pool]
             with torch.no_grad():
-                self.pool_samples_proj[batch_slice] = self.get_projected(gen(cur_latents, cur_snosie), False)
+                self.pool_samples_proj[batch_slice] = self.get_projected(
+                    gen(cur_latents, cur_snosie, second_latent_code=cur_second_latents), 
+                    False
+                )
 
     def imle_sample_force(self, dataset, gen, to_update=None):
         if to_update is None:
@@ -236,6 +247,7 @@ class Sampler:
                                                 num_simp_indices=self.H.num_simp_indices, devices=[i for i in range(device_count)])
                 gen.module.dci_db.add(self.pool_samples_proj[pool_slice])
                 pool_latents = self.pool_latents[pool_slice]
+                pool_second_latents = self.pool_second_latents[pool_slice]
                 snoise_pool = [b[pool_slice] for b in self.snoise_pool]
 
                 t0 = time.time()
@@ -253,6 +265,7 @@ class Sampler:
 
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].clone()
                     self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone() + self.H.imle_perturb_coef * torch.randn((need_update.sum(), self.H.latent_dim))
+                    self.selected_second_latents[global_need_update] = pool_second_latents[nearest_indices[need_update]].clone()
                     for j in range(len(self.res)):
                         self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].clone()
 
