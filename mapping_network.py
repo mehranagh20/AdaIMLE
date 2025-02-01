@@ -59,9 +59,9 @@ class EqualLinear(nn.Module):
 
 
 class MappingNetowrk(nn.Module):
-    def __init__(self, code_dim=512, n_mlp=8):
+    def __init__(self, code_dim=512, n_mlp=8, max_std=0.1):
         super().__init__()
-
+        self.max_std = max_std
         layers = [PixelNorm()]
         for i in range(n_mlp):
             layers.append(EqualLinear(code_dim, code_dim))
@@ -91,8 +91,8 @@ class MappingNetowrk(nn.Module):
             styles.append(x)
 
         mean, logstd = styles[-1].chunk(2, dim=1)
-        # Convert logstd to constrained std using tanh
-        std = torch.exp(logstd).clamp(max=1.0)
+        # Constrain std using sigmoid scaled by max_std
+        std = torch.sigmoid(logstd) * self.max_std
         return mean, std
 
     # def mean_style(self, input):
