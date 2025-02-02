@@ -66,9 +66,9 @@ class MappingNetowrk(nn.Module):
         for i in range(n_mlp):
             layers.append(EqualLinear(code_dim, code_dim))
             layers.append(nn.LeakyReLU(0.2))
-        layers.append(EqualLinear(code_dim, code_dim * 2))
-        layers.append(nn.LeakyReLU(0.2))
-        layers.append(EqualLinear(code_dim * 2, code_dim * 2))
+        # layers.append(EqualLinear(code_dim, code_dim * 2))
+        # layers.append(nn.LeakyReLU(0.2))
+        # layers.append(EqualLinear(code_dim * 2, code_dim * 2))
         # layers.append(nn.LeakyReLU(0.2)) # TODO: try this out
         self.style = nn.Sequential(*layers)
 
@@ -92,7 +92,7 @@ class MappingNetowrk(nn.Module):
 
         mean, logstd = styles[-1].chunk(2, dim=1)
         # Convert logstd to constrained std using tanh
-        std = torch.exp(logstd).clamp(max=1.0)
+        std = torch.exp(logstd).clamp(max=0.2)
         return mean, std
 
     # def mean_style(self, input):
