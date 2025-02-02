@@ -76,7 +76,7 @@ class DecBlock(nn.Module):
         width = self.widths[res]
         if res <= H.max_hierarchy:
             self.noise = NoiseInjection(width)
-        self.adaIN = AdaptiveInstanceNorm(width, H.latent_dim)
+        self.adaIN = AdaptiveInstanceNorm(width, H.latent_dim * 2)
         use_3x3 = res > 2
         cond_width = int(width * H.bottleneck_multiple)
         self.resnet = Block(width, cond_width, width, residual=True, use_3x3=use_3x3)
