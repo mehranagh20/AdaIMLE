@@ -144,7 +144,6 @@ class Sampler:
 
     def find_best_second_latents(self, gen, indices):
         """Find best second latents for given selected primary latents"""
-        print(f'Finding best second latents for {len(indices)} indices {indices}')
         batch_size = self.H.imle_batch
         n_samples = self.H.second_latent_samples
         
@@ -155,12 +154,13 @@ class Sampler:
             
             # Repeat each primary latent n_samples times
             primary_latents = self.selected_latents[batch_indices].repeat_interleave(n_samples, dim=0)
+            snoise = [s[batch_indices].repeat_interleave(n_samples, dim=0) for s in self.selected_snoise]
             # Generate n_samples random second latents for each primary latent
             second_latents = torch.randn(cur_batch_size * n_samples, self.H.latent_dim, device=primary_latents.device)
             
             # Generate samples using both latents
             with torch.no_grad():
-                samples = gen(primary_latents, [s[:(cur_batch_size * n_samples)] for s in self.selected_snoise], second_latent_code=second_latents)
+                samples = gen(primary_latents, snoise, second_latent_code=second_latents)
                 samples_proj = self.get_projected(samples, False)
             
             # Get target projections for this batch
