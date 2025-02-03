@@ -6,7 +6,8 @@ python train.py --hps fewshot \
     --force_factor 100 \
     --imle_staleness 5 \
     --imle_force_resample 15  \
-    --lr 0.00005 \
+    --lr 0.0005 \
     --wandb_name block-imle-obama \
     --wandb_project block-imle-obama \
-    --latent_dim 256
+    --latent_dim 64 \
+    --wandb_mode offline
