@@ -142,7 +142,7 @@ class Sampler:
                 dists[batch_slice] = torch.squeeze(dist)
         return dists
 
-    def find_best_second_latents(self, dataset, gen, indices):
+    def find_best_second_latents(self, gen, indices):
         """Find best second latents for given selected primary latents"""
         print(f'Finding best second latents for {len(indices)} indices {indices}')
         batch_size = self.H.imle_batch
@@ -246,7 +246,7 @@ class Sampler:
 
                 if i % 100 == 0:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
-            self.find_best_second_latents(dataset, gen, to_update)
+            self.find_best_second_latents(gen, to_update)
 
 
         if self.H.latent_epoch > 0:
