@@ -142,24 +142,62 @@ class Sampler:
                 dists[batch_slice] = torch.squeeze(dist)
         return dists
 
+    def find_best_second_latents(self, dataset, gen, indices):
+        """Find best second latents for given selected primary latents"""
+        print(f'Finding best second latents for {len(indices)} indices {indices}')
+        batch_size = self.H.imle_batch
+        n_samples = self.H.second_latent_samples
+        
+        for batch_start in range(0, len(indices), batch_size):
+            batch_end = min(batch_start + batch_size, len(indices))
+            batch_indices = indices[batch_start:batch_end]
+            cur_batch_size = len(batch_indices)
+            
+            # Repeat each primary latent n_samples times
+            primary_latents = self.selected_latents[batch_indices].repeat_interleave(n_samples, dim=0)
+            # Generate n_samples random second latents for each primary latent
+            second_latents = torch.randn(cur_batch_size * n_samples, self.H.latent_dim, device=primary_latents.device)
+            
+            # Generate samples using both latents
+            with torch.no_grad():
+                samples = gen(primary_latents, [s[:(cur_batch_size * n_samples)] for s in self.snoise_tmp], second_latent_code=second_latents)
+                samples_proj = self.get_projected(samples, False)
+            
+            # Get target projections for this batch
+            targets_proj = self.dataset_proj[batch_indices]
+            
+            # Calculate distances between each target and its n_samples candidates
+            dists = torch.zeros(cur_batch_size, n_samples, device=samples_proj.device)
+            for i in range(cur_batch_size):
+                start_idx = i * n_samples
+                end_idx = (i + 1) * n_samples
+                target = targets_proj[i:i+1].repeat(n_samples, 1)
+                dists[i] = torch.sum((samples_proj[start_idx:end_idx] - target) ** 2, dim=1)
+            
+            # Find best second latent for each primary latent
+            best_indices = torch.argmin(dists, dim=1)
+            for i in range(cur_batch_size):
+                self.selected_second_latents[batch_indices[i]] = second_latents[i * n_samples + best_indices[i]]
+
     def imle_sample(self, dataset, gen, factor=None):
         if factor is None:
             factor = self.H.imle_factor
         imle_pool_size = int(len(dataset) * factor)
         t1 = time.time()
         self.selected_dists_tmp[:] = self.selected_dists[:]
+        
         for i in range(imle_pool_size // self.H.imle_db_size):
             self.temp_latent_rnds.normal_()
-            temp_second_latents = torch.randn_like(self.temp_latent_rnds)
             for j in range(len(self.res)):
                 self.snoise_tmp[j].normal_()
             for j in range(self.H.imle_db_size // self.H.imle_batch):
                 batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
                 cur_latents = self.temp_latent_rnds[batch_slice]
-                cur_second_latents = temp_second_latents[batch_slice]
+                # Use zero second latents for initial NN search
+                zero_second_latents = torch.zeros_like(cur_latents)
                 cur_snoise = [x[batch_slice] for x in self.snoise_tmp]
                 with torch.no_grad():
-                    self.temp_samples[batch_slice] = gen(cur_latents, cur_snoise, second_latent_code=cur_second_latents)
+                    self.temp_samples[batch_slice] = gen(cur_latents, cur_snoise, second_latent_code=zero_second_latents)
                     self.temp_samples_proj[batch_slice] = self.get_projected(self.temp_samples[batch_slice], False)
 
             if not gen.module.dci_db:
@@ -171,9 +209,8 @@ class Sampler:
                                             num_simp_indices=self.H.num_simp_indices)
             gen.module.dci_db.add(self.temp_samples_proj)
 
-            t0 = time.time()
+            updated_indices = []
             for ind, y in enumerate(DataLoader(dataset, batch_size=self.H.imle_batch)):
-                # t2 = time.time()
                 _, target = self.preprocess_fn(y)
                 x = self.dataset_proj[ind * self.H.imle_batch:ind * self.H.imle_batch + target.shape[0]]
                 cur_batch_data_flat = x.float()
@@ -187,13 +224,19 @@ class Sampler:
 
                 to_update = torch.nonzero(actual_selected_dists < self.selected_dists[batch_slice], as_tuple=False)
                 to_update = torch.squeeze(to_update)
-                self.selected_dists[ind * self.H.imle_batch + to_update] = actual_selected_dists[to_update].clone()
-                self.selected_latents[ind * self.H.imle_batch + to_update] = self.temp_latent_rnds[nearest_indices[to_update]].clone()
-                self.selected_second_latents[ind * self.H.imle_batch + to_update] = temp_second_latents[nearest_indices[to_update]].clone()
+                update_indices = ind * self.H.imle_batch + to_update
+                self.selected_dists[update_indices] = actual_selected_dists[to_update].clone()
+                self.selected_latents[update_indices] = self.temp_latent_rnds[nearest_indices[to_update]].clone()
+                updated_indices.extend(update_indices.tolist())
+                
                 for k in range(len(self.res)):
-                    self.selected_snoise[k][ind * self.H.imle_batch + to_update] = self.snoise_tmp[k][nearest_indices[to_update]].clone()
+                    self.selected_snoise[k][update_indices] = self.snoise_tmp[k][nearest_indices[to_update]].clone()
 
                 del cur_batch_data_flat
+
+            # Find best second latents for updated primary latents
+            if updated_indices:
+                self.find_best_second_latents(dataset, gen, torch.tensor(updated_indices))
 
             gen.module.dci_db.clear()
 

@@ -77,6 +77,7 @@ def add_imle_arguments(parser):
     parser.add_argument('--imle_factor', type=float, default=0.)  # imle soft-sampling factor -- not used in the paper
     parser.add_argument('--imle_staleness', type=int, default=7)  # imle staleness, i.e., number of iterations to wait before considering the thresholds, tau_i
     parser.add_argument('--imle_batch', type=int, default=16)  # imle batch size used for sampling
+    parser.add_argument('--second_latent_samples', type=int, default=10)
     parser.add_argument('--subset_len', type=int, default=-1)  # subset length for training -- random subset of the dataset. -1 means full dataset
     parser.add_argument('--latent_dim', type=int, default=1024)  # latent code dimension
     parser.add_argument('--imle_perturb_coef', type=float, default=0.001)  # imle perturbation coefficient to avoid same latent codes
