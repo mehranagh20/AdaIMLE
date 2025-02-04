@@ -190,8 +190,8 @@ class Sampler:
         for j in range(self.pool_size // self.H.imle_batch):
             batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
             cur_latents = self.pool_latents[batch_slice]
-            # second_latent = self.pool_second_latents[batch_slice]
-            second_latent = torch.zeros_like(cur_latents)
+            second_latent = self.pool_second_latents[batch_slice]
+            # second_latent = torch.zeros_like(cur_latents)
             cur_snosie = [s[batch_slice] for s in self.snoise_pool]
             with torch.no_grad():
                 self.pool_samples_proj[batch_slice] = self.get_projected(
@@ -224,6 +224,7 @@ class Sampler:
                                                 num_simp_indices=self.H.num_simp_indices, devices=[i for i in range(device_count)])
                 gen.module.dci_db.add(self.pool_samples_proj[pool_slice])
                 pool_latents = self.pool_latents[pool_slice]
+                pool_second_latents = self.pool_second_latents[pool_slice]
                 snoise_pool = [b[pool_slice] for b in self.snoise_pool]
 
                 t0 = time.time()
@@ -241,6 +242,7 @@ class Sampler:
 
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].clone()
                     self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone()
+                    self.selected_second_latents_tmp[global_need_update] = pool_second_latents[nearest_indices[need_update]].clone()
                     for j in range(len(self.res)):
                         self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].clone()
 
@@ -248,10 +250,11 @@ class Sampler:
 
                 if i % 100 == 0:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
-            self.find_best_second_latents(gen, to_update)
+            # self.find_best_second_latents(gen, to_update)
 
 
         self.selected_latents[to_update] = self.selected_latents_tmp[to_update].detach().clone()
+        self.selected_second_latents[to_update] = self.selected_second_latents_tmp[to_update].detach().clone()
         if self.H.latent_epoch > 0:
             for param in gen.parameters():
                 param.requires_grad = True
