@@ -190,6 +190,7 @@ class Sampler:
         for j in range(self.pool_size // self.H.imle_batch):
             batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
             cur_latents = self.pool_latents[batch_slice]
+            # second_latent = self.pool_second_latents[batch_slice]
             second_latent = torch.zeros_like(cur_latents)
             cur_snosie = [s[batch_slice] for s in self.snoise_pool]
             with torch.no_grad():
@@ -250,6 +251,7 @@ class Sampler:
             self.find_best_second_latents(gen, to_update)
 
 
+        self.selected_latents[to_update] = self.selected_latents_tmp[to_update].detach().clone()
         if self.H.latent_epoch > 0:
             for param in gen.parameters():
                 param.requires_grad = True

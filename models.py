@@ -119,6 +119,7 @@ class Decoder(nn.Module):
         if second_latent_code is not None:
             w_latent = second_latent_code
         w = mean + std * w_latent
+        # w = self.mapping_network(latent_code)
         
         x = self.constant.repeat(latent_code.shape[0], 1, 1, 1)
         if spatial_noise:

@@ -91,7 +91,7 @@ class MappingNetowrk(nn.Module):
             styles.append(x)
 
         mean, logstd = styles[-1].chunk(2, dim=1)
-        # Convert logstd to constrained std using tanh
+        # we can scale the logstd
         std = torch.exp(logstd).clamp(max=1.0)
         return mean, std
 
