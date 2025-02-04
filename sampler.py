@@ -239,7 +239,7 @@ class Sampler:
                     global_need_update = indices[need_update]
 
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].clone()
-                    self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone() + self.H.imle_perturb_coef * torch.randn((need_update.sum(), self.H.latent_dim))
+                    self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone()
                     for j in range(len(self.res)):
                         self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].clone()
 
