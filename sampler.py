@@ -144,7 +144,7 @@ class Sampler:
 
     def find_best_second_latents(self, gen, indices):
         """Find best second latents for given selected primary latents"""
-        batch_size = self.H.imle_batch
+        batch_size = 2
         n_samples = self.H.second_latent_samples
         
         for batch_start in range(0, len(indices), batch_size):
