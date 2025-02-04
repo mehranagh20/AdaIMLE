@@ -152,22 +152,23 @@ class Sampler:
             batch_indices = indices[batch_start:batch_end]
             cur_batch_size = len(batch_indices)
             
-            # Repeat each primary latent n_samples times
-            primary_latents = self.selected_latents[batch_indices].repeat_interleave(n_samples, dim=0)
-            snoise = [s[batch_indices].repeat_interleave(n_samples, dim=0) for s in self.selected_snoise]
-            # Generate n_samples random second latents for each primary latent
-            second_latents = torch.randn(cur_batch_size * n_samples, self.H.latent_dim, device=primary_latents.device)
+            # Move primary latents to CUDA and repeat
+            primary_latents = self.selected_latents[batch_indices].cuda().repeat_interleave(n_samples, dim=0)
+            snoise = [s[batch_indices].cuda().repeat_interleave(n_samples, dim=0) for s in self.selected_snoise]
+            
+            # Generate random second latents directly on CUDA
+            second_latents = torch.randn(cur_batch_size * n_samples, self.H.latent_dim, device='cuda')
             
             # Generate samples using both latents
             with torch.no_grad():
                 samples = gen(primary_latents, snoise, second_latent_code=second_latents)
                 samples_proj = self.get_projected(samples, False)
             
-            # Get target projections for this batch
-            targets_proj = self.dataset_proj[batch_indices]
+            # Get target projections and move to CUDA
+            targets_proj = self.dataset_proj[batch_indices].cuda()
             
             # Calculate distances between each target and its n_samples candidates
-            dists = torch.zeros(cur_batch_size, n_samples, device=samples_proj.device)
+            dists = torch.zeros(cur_batch_size, n_samples, device='cuda')
             for i in range(cur_batch_size):
                 start_idx = i * n_samples
                 end_idx = (i + 1) * n_samples
@@ -177,7 +178,7 @@ class Sampler:
             # Find best second latent for each primary latent
             best_indices = torch.argmin(dists, dim=1)
             for i in range(cur_batch_size):
-                self.selected_second_latents[batch_indices[i]] = second_latents[i * n_samples + best_indices[i]]
+                self.selected_second_latents[batch_indices[i]] = second_latents[i * n_samples + best_indices[i]].cpu()
 
     def resample_pool(self, gen, ds):
         # self.init_projection(ds)
