@@ -203,8 +203,8 @@ class Sampler:
                     global_need_update = indices[need_update]
 
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].clone()
-                    self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone()
-                    self.selected_second_latents_tmp[global_need_update] = pool_second_latents[nearest_indices[need_update]].clone()
+                    self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone() + self.H.imle_perturb_coef * torch.randn((need_update.sum(), self.H.latent_dim))
+                    self.selected_second_latents[global_need_update] = pool_second_latents[nearest_indices[need_update]].clone()
                     for j in range(len(self.res)):
                         self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].clone()
 
@@ -212,11 +212,33 @@ class Sampler:
 
                 if i % 100 == 0:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
-            # self.find_best_second_latents(gen, to_update)
 
 
-        self.selected_latents[to_update] = self.selected_latents_tmp[to_update].detach().clone()
-        self.selected_second_latents[to_update] = self.selected_second_latents_tmp[to_update].detach().clone()
+        if self.H.latent_epoch > 0:
+            for param in gen.parameters():
+                param.requires_grad = False
+        updatable_latents = self.selected_latents_tmp[to_update].clone().requires_grad_(True)
+        latent_optimizer = AdamW([updatable_latents], lr=self.latent_lr)
+        comb_dataset = ZippedDataset(TensorDataset(dataset[to_update]), TensorDataset(updatable_latents))
+
+        for gd_epoch in range(self.H.latent_epoch):
+            losses = []
+            for cur, _ in DataLoader(comb_dataset, batch_size=self.H.n_batch):
+                x = cur[0]
+                latents = cur[1][0]
+                _, target = self.preprocess_fn(x)
+                gen.zero_grad()
+                px_z = gen(latents)  # TODO fix this
+                loss = self.calc_loss(px_z, target.permute(0, 3, 1, 2))
+                loss.backward()
+                latent_optimizer.step()
+                updatable_latents.grad.zero_()
+
+                losses.append(loss.detach())
+            print('avg loss', gd_epoch, sum(losses) / len(losses))
+        self.selected_latents[to_update] = updatable_latents.detach().clone()
+
         if self.H.latent_epoch > 0:
             for param in gen.parameters():
                 param.requires_grad = True
+        self.latent_lr = self.latent_lr * (1 - self.H.latent_decay)
