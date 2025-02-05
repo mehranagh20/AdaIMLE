@@ -208,23 +208,18 @@ class Sampler:
                     global_need_update = indices[need_update]
 
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].clone()
-                    self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].clone()
-                    self.selected_second_latents_tmp[global_need_update] = pool_second_latents[nearest_indices[need_update]].clone()
-                    self.selected_third_latents_tmp[global_need_update] = pool_third_latents[nearest_indices[need_update]].clone()
+                    self.selected_latents[global_need_update] = pool_latents[nearest_indices[need_update]].detach().clone()
+                    self.selected_second_latents[global_need_update] = pool_second_latents[nearest_indices[need_update]].detach().clone()
+                    self.selected_third_latents[global_need_update] = pool_third_latents[nearest_indices[need_update]].detach().clone()
                     for j in range(len(self.res)):
-                        
-                        self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].clone()
+                        self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].detach().clone()
 
                 gen.module.dci_db.clear()
 
                 if i % 100 == 0:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
-            # self.find_best_second_latents(gen, to_update)
 
 
-        self.selected_latents[to_update] = self.selected_latents_tmp[to_update].detach().clone()
-        self.selected_second_latents[to_update] = self.selected_second_latents_tmp[to_update].detach().clone()
-        self.selected_third_latents[to_update] = self.selected_third_latents_tmp[to_update].detach().clone()
         if self.H.latent_epoch > 0:
             for param in gen.parameters():
                 param.requires_grad = True
