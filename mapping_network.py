@@ -45,12 +45,15 @@ def equal_lr(module, name='weight'):
 
 
 class EqualLinear(nn.Module):
-    def __init__(self, in_dim, out_dim):
+    def __init__(self, in_dim, out_dim, bias_init=None):
         super().__init__()
 
         linear = nn.Linear(in_dim, out_dim)
         # linear.weight.data.normal_()
-        linear.bias.data.zero_()
+        if bias_init is not None:
+            linear.bias.data.fill_(bias_init)
+        else:
+            linear.bias.data.zero_()
 
         self.linear = linear
 
@@ -63,17 +66,18 @@ class MappingNetowrk(nn.Module):
         super().__init__()
 
         # Add min and max logvar as constants
-        self.min_logvar = -5
-        self.max_logvar = 2
+        self.min_logvar = -10
+        self.max_logvar = 0.5
 
         layers = [PixelNorm()]
         for i in range(n_mlp):
             layers.append(EqualLinear(code_dim, code_dim))
             layers.append(nn.LeakyReLU(0.2))
+        
+        # Remove the LeakyReLU after the first expansion to code_dim * 2
         layers.append(EqualLinear(code_dim, code_dim * 2))
-        layers.append(nn.LeakyReLU(0.2))
-        layers.append(EqualLinear(code_dim * 2, code_dim * 2))
-        # layers.append(nn.LeakyReLU(0.2)) # TODO: try this out
+        # No activation here anymore
+        layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0))
         self.style = nn.Sequential(*layers)
 
     def forward(
@@ -95,7 +99,6 @@ class MappingNetowrk(nn.Module):
             styles.append(x)
 
         mean, logvar = styles[-1].chunk(2, dim=1)
-        # Clamp logvar using softplus
         logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
         logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
         

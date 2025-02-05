@@ -10,3 +10,4 @@ experiments
 .datasets/
 datasets
 wandb
+test.ipynb
