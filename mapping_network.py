@@ -62,6 +62,10 @@ class MappingNetowrk(nn.Module):
     def __init__(self, code_dim=512, n_mlp=8):
         super().__init__()
 
+        # Add min and max logvar as constants
+        self.min_logvar = -5
+        self.max_logvar = 2
+
         layers = [PixelNorm()]
         for i in range(n_mlp):
             layers.append(EqualLinear(code_dim, code_dim))
@@ -90,10 +94,13 @@ class MappingNetowrk(nn.Module):
             x = self.style(i)
             styles.append(x)
 
-        mean, logstd = styles[-1].chunk(2, dim=1)
-        # we can scale the logstd
-        std = torch.exp(logstd)
-        print('params', torch.mean(mean), torch.mean(std), torch.mean(logstd))
+        mean, logvar = styles[-1].chunk(2, dim=1)
+        # Clamp logvar using softplus
+        logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
+        logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
+        
+        std = torch.exp(logvar)
+        print('params', torch.mean(mean), torch.mean(std), torch.mean(logvar))
         return mean, std
 
     # def mean_style(self, input):
