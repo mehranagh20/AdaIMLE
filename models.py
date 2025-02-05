@@ -113,12 +113,15 @@ class Decoder(nn.Module):
         self.gain = nn.Parameter(torch.ones(1, H.image_channels, 1, 1))
         self.bias = nn.Parameter(torch.zeros(1, H.image_channels, 1, 1))
 
-    def forward(self, latent_code, spatial_noise, input_is_w=False, second_latent_code=None):
-        mean, std = self.mapping_network(latent_code)
-        w_latent = torch.randn_like(latent_code)
+    def forward(self, latent_code, spatial_noise, input_is_w=False, second_latent_code=None, third_latent_code=None):
+        f_latent = torch.randn_like(latent_code)
+        s_latent = torch.randn_like(latent_code)
         if second_latent_code is not None:
-            w_latent = second_latent_code
-        w = mean + std * w_latent
+            f_latent = second_latent_code
+        if third_latent_code is not None:
+            s_latent = third_latent_code
+        w = self.mapping_network(latent_code, f_latent, s_latent)
+        # w = mean + std * f_latent
         # w = self.mapping_network(latent_code)
         
         x = self.constant.repeat(latent_code.shape[0], 1, 1, 1)

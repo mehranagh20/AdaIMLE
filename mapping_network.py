@@ -62,38 +62,41 @@ class MappingNetowrk(nn.Module):
     def __init__(self, code_dim=512, n_mlp=8):
         super().__init__()
 
-        layers = [PixelNorm()]
-        for i in range(n_mlp):
-            layers.append(EqualLinear(code_dim, code_dim))
-            layers.append(nn.LeakyReLU(0.2))
-        layers.append(EqualLinear(code_dim, code_dim * 2))
-        layers.append(nn.LeakyReLU(0.2))
-        layers.append(EqualLinear(code_dim * 2, code_dim * 2))
-        # layers.append(nn.LeakyReLU(0.2)) # TODO: try this out
-        self.style = nn.Sequential(*layers)
+        f_layers = []
+        s_layers = []
+        for i in range(4):
+            f_layers.append(EqualLinear(code_dim, code_dim))
+            f_layers.append(nn.LeakyReLU(0.2))
+            s_layers.append(EqualLinear(code_dim, code_dim))
+            s_layers.append(nn.LeakyReLU(0.2))
+        f_layers.append(EqualLinear(code_dim, code_dim * 2))
+        f_layers.append(nn.LeakyReLU(0.2))
+        f_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
+        s_layers.append(EqualLinear(code_dim, code_dim * 2))
+        s_layers.append(nn.LeakyReLU(0.2))
+        s_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
+
+        self.first = nn.Sequential(*f_layers)
+        self.second = nn.Sequential(*s_layers)
 
     def forward(
         self,
         input,
-        noise=None,
-        step=0,
-        alpha=-1,
-        mean_style=None,
-        style_weight=0,
-        mixing_range=(-1, -1),
+        f_latent,
+        s_latent,
     ):
-        styles = []
-        if type(input) not in (list, tuple):
-            input = [input]
 
-        for i in input:
-            x = self.style(i)
-            styles.append(x)
-
-        mean, logstd = styles[-1].chunk(2, dim=1)
-        # we can scale the logstd
+        out = self.first(input)
+        mean, logstd = out.chunk(2, dim=1)
         std = torch.exp(logstd).clamp(max=1.0)
-        return mean, std
+        f_sample = mean + std * f_latent
+
+        out = self.second(f_sample)
+        mean, logstd = out.chunk(2, dim=1)
+        std = torch.exp(logstd).clamp(max=1.0)
+        s_sample = mean + std * s_latent
+
+        return s_sample
 
     # def mean_style(self, input):
 

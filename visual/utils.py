@@ -32,19 +32,46 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
 
     temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
     second_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
-    for t in range(H.num_rows_visualize):
+    third_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+    
+    # Generate samples with random first latent
+    for t in range(2):
         temp_latent_rnds.normal_()
         tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
         batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
 
-    for i in range(4):
+    # Generate samples varying second latent
+    for i in range(3):
         tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
         second_latent_rnds.normal_()
-        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, second_latent_code=second_latent_rnds))
-        
+        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, 
+                                    second_latent_code=second_latent_rnds,
+                                    third_latent_code=torch.zeros_like(third_latent_rnds)))
+    
+    # Generate samples varying third latent
+    for i in range(3):
+        tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+        third_latent_rnds.normal_()
+        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise,
+                                    second_latent_code=torch.zeros_like(second_latent_rnds),
+                                    third_latent_code=third_latent_rnds))
+
+    # Generate samples varying third latent
+    for i in range(3):
+        # tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+        third_latent_rnds.normal_()
+        second_latent_rnds.normal_()
+        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise,
+                                    second_latent_code=second_latent_rnds,
+                                    third_latent_code=third_latent_rnds))
+    
+    # Generate sample with all latents set to zero
     tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
     second_latent_rnds.zero_()
-    batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, second_latent_code=second_latent_rnds))
+    third_latent_rnds.zero_()
+    batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, 
+                                second_latent_code=second_latent_rnds,
+                                third_latent_code=third_latent_rnds))
 
     n_rows = len(batches)
     im = np.concatenate(batches, axis=0).reshape((n_rows, mb, *shape[1:])).transpose([0, 2, 1, 3, 4]).reshape(
