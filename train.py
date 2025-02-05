@@ -82,7 +82,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                 epoch += 1
                 last_updated[:] = last_updated + 1
 
-                sampler.selected_dists[:] = sampler.calc_dists_existing(split_x_tensor, imle, dists=sampler.selected_dists)
+                sampler.selected_dists[:] = sampler.calc_dists_existing(split_x_tensor, imle, dists=sampler.selected_dists, second_latent_code=sampler.selected_second_latents)
                 dists_in_threshold = sampler.selected_dists < change_thresholds
                 updated_enough = last_updated >= H.imle_staleness
                 updated_too_much = last_updated >= H.imle_force_resample

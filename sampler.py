@@ -117,16 +117,19 @@ class Sampler:
         else:
             return self.H.lpips_coef * res + self.H.l2_coef * torch.mean(self.l2_loss(inp, tar), dim=[1, 2, 3])
 
-    def calc_dists_existing(self, dataset_tensor, gen, dists=None, latents=None, to_update=None, snoise=None):
+    def calc_dists_existing(self, dataset_tensor, gen, dists=None, latents=None, to_update=None, snoise=None, second_latent_code=None):
         if dists is None:
             dists = self.selected_dists
         if latents is None:
             latents = self.selected_latents
         if snoise is None:
             snoise = self.selected_snoise
+        if second_latent_code is None:
+            second_latent_code = self.selected_second_latents
 
         if to_update is not None:
             latents = latents[to_update]
+            second_latent_code = second_latent_code[to_update]
             dists = dists[to_update]
             dataset_tensor = dataset_tensor[to_update]
             snoise = [s[to_update] for s in snoise]
@@ -135,9 +138,10 @@ class Sampler:
             _, target = self.preprocess_fn(x)
             batch_slice = slice(ind * self.H.n_batch, ind * self.H.n_batch + target.shape[0])
             cur_latents = latents[batch_slice]
+            cur_second_latents = second_latent_code[batch_slice]
             cur_snoise = [s[batch_slice] for s in snoise]
             with torch.no_grad():
-                out = gen(cur_latents, cur_snoise)
+                out = gen(cur_latents, cur_snoise, second_latent_code=cur_second_latents)
                 dist = self.calc_loss(target.permute(0, 3, 1, 2), out, use_mean=False)
                 dists[batch_slice] = torch.squeeze(dist)
         return dists
