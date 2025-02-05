@@ -92,7 +92,7 @@ class MappingNetowrk(nn.Module):
 
         mean, logstd = styles[-1].chunk(2, dim=1)
         # we can scale the logstd
-        std = torch.exp(logstd).clamp(max=2.0)
+        std = torch.exp(logstd)
         print('params', torch.mean(mean), torch.mean(std), torch.mean(logstd))
         return mean, std
 
