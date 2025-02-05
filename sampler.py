@@ -212,6 +212,7 @@ class Sampler:
                     self.selected_second_latents_tmp[global_need_update] = pool_second_latents[nearest_indices[need_update]].clone()
                     self.selected_third_latents_tmp[global_need_update] = pool_third_latents[nearest_indices[need_update]].clone()
                     for j in range(len(self.res)):
+                        
                         self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].clone()
 
                 gen.module.dci_db.clear()

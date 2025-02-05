@@ -143,6 +143,6 @@ class IMLE(nn.Module):
         self.dci_db = None
         self.decoder = Decoder(H)
 
-    def forward(self, latents, spatial_noise=None, input_is_w=False, second_latent_code=None):
-        return self.decoder.forward(latents, spatial_noise, input_is_w, second_latent_code)
+    def forward(self, latents, spatial_noise=None, input_is_w=False, second_latent_code=None, third_latent_code=None):
+        return self.decoder.forward(latents, spatial_noise, input_is_w, second_latent_code, third_latent_code)
 
