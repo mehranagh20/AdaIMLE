@@ -62,6 +62,10 @@ class MappingNetowrk(nn.Module):
     def __init__(self, code_dim=512, n_mlp=8):
         super().__init__()
 
+        # Add min and max logvar as constants
+        self.min_logvar = -5
+        self.max_logvar = 1
+
         f_layers = [PixelNorm()]
         s_layers = [PixelNorm()]
         for i in range(4):
@@ -85,17 +89,22 @@ class MappingNetowrk(nn.Module):
         f_latent,
         s_latent,
     ):
-
         out = self.first(input)
-        mean, logstd = out.chunk(2, dim=1)
-        std = torch.exp(logstd).clamp(max=1.0)
-        print('first', torch.mean(std), torch.mean(mean), torch.mean(logstd), torch.mean(f_latent))
+        mean, logvar = out.chunk(2, dim=1)
+        # Clamp logvar using softplus
+        logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
+        logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
+        std = torch.exp(logvar)
+        print('first', torch.mean(std), torch.mean(mean), torch.mean(logvar), torch.mean(f_latent))
         f_sample = mean + std * f_latent
 
         out = self.second(f_sample)
-        mean, logstd = out.chunk(2, dim=1)
-        std = torch.exp(logstd).clamp(max=1.0)
-        print('second', torch.mean(std), torch.mean(mean), torch.mean(logstd), torch.mean(s_latent))
+        mean, logvar = out.chunk(2, dim=1)
+        # Clamp logvar using softplus
+        logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
+        logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
+        std = torch.exp(logvar)
+        print('second', torch.mean(std), torch.mean(mean), torch.mean(logvar), torch.mean(s_latent))
         s_sample = mean + std * s_latent
 
         return s_sample
