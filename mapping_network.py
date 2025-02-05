@@ -89,13 +89,13 @@ class MappingNetowrk(nn.Module):
         out = self.first(input)
         mean, logstd = out.chunk(2, dim=1)
         std = torch.exp(logstd).clamp(max=1.0)
-        print('first', torch.mean(std))
+        print('first', torch.mean(std), torch.mean(mean), torch.mean(logstd), torch.mean(f_latent))
         f_sample = mean + std * f_latent
 
         out = self.second(f_sample)
         mean, logstd = out.chunk(2, dim=1)
         std = torch.exp(logstd).clamp(max=1.0)
-        print('second', torch.mean(std))
+        print('second', torch.mean(std), torch.mean(mean), torch.mean(logstd), torch.mean(s_latent))
         s_sample = mean + std * s_latent
 
         return s_sample
