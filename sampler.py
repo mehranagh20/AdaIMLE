@@ -26,6 +26,8 @@ class Sampler:
         self.selected_latents_tmp = torch.randn([sz, H.latent_dim], dtype=torch.float32)
         self.selected_second_latents = torch.randn([sz, H.latent_dim], dtype=torch.float32)
         self.selected_second_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_third_latents = torch.randn([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_third_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
 
         blocks = parse_layer_string(H.dec_blocks)
         self.block_res = [s[0] for s in blocks]
@@ -44,6 +46,7 @@ class Sampler:
 
         self.pool_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
         self.pool_second_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
+        self.pool_third_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
         self.sample_pool_usage = torch.ones([sz], dtype=torch.bool)
 
         self.projections = []
@@ -85,14 +88,14 @@ class Sampler:
             batch_slice = slice(ind * self.H.n_batch, ind * self.H.n_batch + x[0].shape[0])
             self.dataset_proj[batch_slice] = self.get_projected(self.preprocess_fn(x)[1])
 
-    def sample(self, latents, gen, snoise=None, second_latent_code=None):
+    def sample(self, latents, gen, snoise=None, second_latent_code=None, third_latent_code=None):
         with torch.no_grad():
             nm = latents.shape[0]
             if snoise is None:
                 for i in range(len(self.res)):
                     self.snoise_tmp[i].normal_()
                 snoise = [s[:nm] for s in self.snoise_tmp]
-            px_z = gen(latents, snoise, second_latent_code=second_latent_code).permute(0, 2, 3, 1)
+            px_z = gen(latents, snoise, second_latent_code=second_latent_code, third_latent_code=third_latent_code).permute(0, 2, 3, 1)
             xhat = (px_z + 1.0) * 127.5
             xhat = xhat.detach().cpu().numpy()
             xhat = np.minimum(np.maximum(0.0, xhat), 255.0).astype(np.uint8)
@@ -117,7 +120,7 @@ class Sampler:
         else:
             return self.H.lpips_coef * res + self.H.l2_coef * torch.mean(self.l2_loss(inp, tar), dim=[1, 2, 3])
 
-    def calc_dists_existing(self, dataset_tensor, gen, dists=None, latents=None, to_update=None, snoise=None, second_latent_code=None):
+    def calc_dists_existing(self, dataset_tensor, gen, dists=None, latents=None, to_update=None, snoise=None, second_latent_code=None, third_latent_code=None):
         if dists is None:
             dists = self.selected_dists
         if latents is None:
@@ -126,10 +129,13 @@ class Sampler:
             snoise = self.selected_snoise
         if second_latent_code is None:
             second_latent_code = self.selected_second_latents
+        if third_latent_code is None:
+            third_latent_code = self.selected_third_latents
 
         if to_update is not None:
             latents = latents[to_update]
             second_latent_code = second_latent_code[to_update]
+            third_latent_code = third_latent_code[to_update]
             dists = dists[to_update]
             dataset_tensor = dataset_tensor[to_update]
             snoise = [s[to_update] for s in snoise]
@@ -139,9 +145,10 @@ class Sampler:
             batch_slice = slice(ind * self.H.n_batch, ind * self.H.n_batch + target.shape[0])
             cur_latents = latents[batch_slice]
             cur_second_latents = second_latent_code[batch_slice]
+            cur_third_latents = third_latent_code[batch_slice]
             cur_snoise = [s[batch_slice] for s in snoise]
             with torch.no_grad():
-                out = gen(cur_latents, cur_snoise, second_latent_code=cur_second_latents)
+                out = gen(cur_latents, cur_snoise, second_latent_code=cur_second_latents, third_latent_code=cur_third_latents)
                 dist = self.calc_loss(target.permute(0, 3, 1, 2), out, use_mean=False)
                 dists[batch_slice] = torch.squeeze(dist)
         return dists
@@ -150,6 +157,7 @@ class Sampler:
         # self.init_projection(ds)
         self.pool_latents.normal_()
         self.pool_second_latents.normal_()
+        self.pool_third_latents.normal_()
         for i in range(len(self.res)):
             self.snoise_pool[i].normal_()
 
@@ -157,11 +165,11 @@ class Sampler:
             batch_slice = slice(j * self.H.imle_batch, (j + 1) * self.H.imle_batch)
             cur_latents = self.pool_latents[batch_slice]
             second_latent = self.pool_second_latents[batch_slice]
-            # second_latent = torch.zeros_like(cur_latents)
+            third_latent = self.pool_third_latents[batch_slice]
             cur_snosie = [s[batch_slice] for s in self.snoise_pool]
             with torch.no_grad():
                 self.pool_samples_proj[batch_slice] = self.get_projected(
-                    gen(cur_latents, cur_snosie, second_latent_code=second_latent), 
+                    gen(cur_latents, cur_snosie, second_latent_code=second_latent, third_latent_code=third_latent), 
                     False
                 )
 
@@ -191,6 +199,7 @@ class Sampler:
                 gen.module.dci_db.add(self.pool_samples_proj[pool_slice])
                 pool_latents = self.pool_latents[pool_slice]
                 pool_second_latents = self.pool_second_latents[pool_slice]
+                pool_third_latents = self.pool_third_latents[pool_slice]
                 snoise_pool = [b[pool_slice] for b in self.snoise_pool]
 
                 t0 = time.time()
@@ -209,6 +218,7 @@ class Sampler:
                     self.selected_dists_tmp[global_need_update] = dci_dists[need_update].detach().clone()
                     self.selected_latents_tmp[global_need_update] = pool_latents[nearest_indices[need_update]].detach().clone() + self.H.imle_perturb_coef * torch.randn((need_update.sum(), self.H.latent_dim))
                     self.selected_second_latents[global_need_update] = pool_second_latents[nearest_indices[need_update]].detach().clone()
+                    self.selected_third_latents[global_need_update] = pool_third_latents[nearest_indices[need_update]].detach().clone()
                     for j in range(len(self.res)):
                         self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].detach().clone()
 

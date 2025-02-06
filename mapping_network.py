@@ -69,19 +69,30 @@ class MappingNetowrk(nn.Module):
         self.min_logvar = -5
         self.max_logvar = 1
 
-        layers = []
-        for i in range(n_mlp):
-            layers.append(EqualLinear(code_dim, code_dim))
-            layers.append(nn.LeakyReLU(0.2))
+        f_layers = []
+        s_layers = []
+        for i in range(4):
+            f_layers.append(EqualLinear(code_dim, code_dim))
+            f_layers.append(nn.LeakyReLU(0.2))
+            s_layers.append(EqualLinear(code_dim, code_dim))
+            s_layers.append(nn.LeakyReLU(0.2))
         
-        layers.append(EqualLinear(code_dim, code_dim * 2))
-        layers.append(EqualLinear(code_dim * 2, code_dim * 2))
-        layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0, bias_start_dim=code_dim))
-        self.style = nn.Sequential(*layers)
+        f_layers.append(EqualLinear(code_dim, code_dim * 2))
+        f_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
+        f_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0, bias_start_dim=code_dim))
+
+        s_layers.append(EqualLinear(code_dim, code_dim * 2))
+        s_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
+        s_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0, bias_start_dim=code_dim))
+
+        self.f_style = nn.Sequential(*f_layers)
+        self.s_style = nn.Sequential(*s_layers)
 
     def forward(
         self,
         input,
+        l1,
+        l2,
         noise=None,
         step=0,
         alpha=-1,
@@ -89,20 +100,19 @@ class MappingNetowrk(nn.Module):
         style_weight=0,
         mixing_range=(-1, -1),
     ):
-        styles = []
-        if type(input) not in (list, tuple):
-            input = [input]
-
-        for i in input:
-            x = self.style(i)
-            styles.append(x)
-
-        mean, logvar = styles[-1].chunk(2, dim=1)
+        mean, logvar = self.f_style(input).chunk(2, dim=1)
         logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
         logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
-        
         std = torch.exp(logvar)
-        return mean, std
+        s1 = mean + l1 * std
+
+        mean, logvar = self.s_style(s1).chunk(2, dim=1)
+        logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
+        logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
+        std = torch.exp(logvar)
+        s2 = mean + l2 * std
+
+        return s2
 
     # def mean_style(self, input):
 

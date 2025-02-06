@@ -27,10 +27,10 @@ from visual.utils import (generate_and_save, generate_for_NN,
                           get_sample_for_visualization)
 
 
-def training_step_imle(H, n, targets, latents, second_latents, snoise, imle, ema_imle, optimizer, loss_fn):
+def training_step_imle(H, n, targets, latents, second_latents, third_latents, snoise, imle, ema_imle, optimizer, loss_fn):
     t0 = time.time()
     imle.zero_grad()
-    px_z = imle(latents, snoise, second_latent_code=second_latents)
+    px_z = imle(latents, snoise, second_latent_code=second_latents, third_latent_code=third_latents)
     loss = loss_fn(px_z, targets.permute(0, 3, 1, 2))
     loss.backward()
     optimizer.step()
@@ -141,7 +141,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     _, target = preprocess_fn(x)
                     cur_snoise = [s[indices] for s in sampler.selected_snoise]
                     second_latents = sampler.selected_second_latents[indices]
-                    stat = training_step_imle(H, target.shape[0], target, latents, second_latents, cur_snoise, imle, ema_imle, optimizer, sampler.calc_loss)
+                    third_latents = sampler.selected_third_latents[indices]
+                    stat = training_step_imle(H, target.shape[0], target, latents, second_latents, third_latents, cur_snoise, imle, ema_imle, optimizer, sampler.calc_loss)
                     stats.append(stat)
                     scheduler.step()
 
