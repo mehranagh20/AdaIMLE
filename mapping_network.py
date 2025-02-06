@@ -66,17 +66,16 @@ class MappingNetowrk(nn.Module):
         super().__init__()
 
         # Add min and max logvar as constants
-        self.min_logvar = -10
-        self.max_logvar = 0.5
+        self.min_logvar = -5
+        self.max_logvar = 1
 
-        layers = [PixelNorm()]
+        layers = []
         for i in range(n_mlp):
             layers.append(EqualLinear(code_dim, code_dim))
             layers.append(nn.LeakyReLU(0.2))
         
-        # Remove the LeakyReLU after the first expansion to code_dim * 2
         layers.append(EqualLinear(code_dim, code_dim * 2))
-        # No activation here anymore, initialize only the logvar portion to -2.0
+        layers.append(EqualLinear(code_dim * 2, code_dim * 2))
         layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0, bias_start_dim=code_dim))
         self.style = nn.Sequential(*layers)
 
@@ -103,7 +102,6 @@ class MappingNetowrk(nn.Module):
         logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
         
         std = torch.exp(logvar)
-        print('params', torch.mean(mean), torch.mean(std), torch.mean(logvar))
         return mean, std
 
     # def mean_style(self, input):

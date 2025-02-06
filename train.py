@@ -30,8 +30,7 @@ from visual.utils import (generate_and_save, generate_for_NN,
 def training_step_imle(H, n, targets, latents, second_latents, snoise, imle, ema_imle, optimizer, loss_fn):
     t0 = time.time()
     imle.zero_grad()
-    # px_z = imle(latents, snoise, second_latent_code=second_latents)
-    px_z = imle(latents, snoise)
+    px_z = imle(latents, snoise, second_latent_code=second_latents)
     loss = loss_fn(px_z, targets.permute(0, 3, 1, 2))
     loss.backward()
     optimizer.step()
@@ -61,6 +60,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
         subset_len = len(data_train)
 
     sampler = Sampler(H, subset_len, preprocess_fn)
+    sampler.resample_pool(imle, data_train)
 
     last_updated = torch.zeros(subset_len, dtype=torch.int16).cuda()
     times_updated = torch.zeros(subset_len, dtype=torch.int8).cuda()
