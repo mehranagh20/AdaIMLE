@@ -22,9 +22,9 @@ class Sampler:
         self.H = H
         self.latent_lr = H.latent_lr
         self.entire_ds = torch.arange(sz)
-        self.selected_latents = torch.empty([sz, H.latent_dim], dtype=torch.float32)
-        self.selected_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
-        self.selected_second_latents = torch.empty([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_latents = torch.randn([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_latents_tmp = torch.randn([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_second_latents = torch.randn([sz, H.latent_dim], dtype=torch.float32)
         self.selected_second_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
 
         blocks = parse_layer_string(H.dec_blocks)
@@ -38,8 +38,8 @@ class Sampler:
         self.selected_dists = torch.empty([sz], dtype=torch.float32).cuda()
         self.selected_dists[:] = np.inf
         self.selected_dists_tmp = torch.empty([sz], dtype=torch.float32).cuda()
-        self.temp_latent_rnds = torch.empty([self.H.imle_db_size, self.H.latent_dim], dtype=torch.float32)
-        self.temp_samples = torch.empty([self.H.imle_db_size, H.image_channels, self.H.image_size, self.H.image_size],
+        self.temp_latent_rnds = torch.randn([self.H.imle_db_size, self.H.latent_dim], dtype=torch.float32)
+        self.temp_samples = torch.randn([self.H.imle_db_size, H.image_channels, self.H.image_size, self.H.image_size],
                                         dtype=torch.float32)
 
         self.pool_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
