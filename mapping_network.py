@@ -82,6 +82,7 @@ class MappingNetowrk(nn.Module):
     def forward(
         self,
         input,
+        second_latent_code=None,
         noise=None,
         step=0,
         alpha=-1,
@@ -102,7 +103,8 @@ class MappingNetowrk(nn.Module):
         logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
         
         std = torch.exp(logvar)
-        return mean, std
+        s = mean + std * second_latent_code
+        return s
 
     # def mean_style(self, input):
 

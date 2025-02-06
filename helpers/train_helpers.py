@@ -26,7 +26,7 @@ def update_ema(imle, ema_imle, ema_rate):
 
 def save_model(path, imle, ema_imle, optimizer, H):
     torch.save(imle.state_dict(), f'{path}-model.th')
-    torch.save(ema_imle.state_dict(), f'{path}-model-ema.th')
+    # torch.save(ema_imle.state_dict(), f'{path}-model-ema.th')
     torch.save(optimizer.state_dict(), f'{path}-opt.th')
     from_log = os.path.join(H.save_dir, 'log.jsonl')
     to_log = f'{os.path.dirname(path)}/{os.path.basename(path)}-log.jsonl'

@@ -25,6 +25,7 @@ from visual.spatial_visual import spatial_vissual
 from visual.utils import (generate_and_save, generate_for_NN,
                           generate_images_initial,
                           get_sample_for_visualization)
+from networks_stylegan3 import Generator
 
 
 def training_step_imle(H, n, targets, latents, second_latents, snoise, imle, ema_imle, optimizer, loss_fn):
@@ -34,8 +35,6 @@ def training_step_imle(H, n, targets, latents, second_latents, snoise, imle, ema
     loss = loss_fn(px_z, targets.permute(0, 3, 1, 2))
     loss.backward()
     optimizer.step()
-    if ema_imle is not None:
-        update_ema(imle, ema_imle, H.ema_rate)
 
     stats = get_cpu_stats_over_ranks(dict(loss_nans=0, loss=loss))
     stats.update(skipped_updates=0, iter_time=time.time() - t0, grad_norm=0)
@@ -71,6 +70,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
 
     epoch = -1
     for outer in range(H.num_epochs):
+        print(outer)
         for split_ind, split_x_tensor in enumerate(DataLoader(data_train, batch_size=subset_len, pin_memory=True)):
             split_x_tensor = split_x_tensor[0].contiguous()
             split_x = TensorDataset(split_x_tensor)
@@ -208,7 +208,9 @@ def main(H=None):
     if not H:
         H = H_cur
     H, data_train, data_valid_or_test, preprocess_fn = set_up_data(H)
-    imle, ema_imle = load_imle(H, logprint)
+    # imle, ema_imle = load_imle(H, logprint)
+    imle = Generator(z_dim=H.latent_dim, c_dim=0, w_dim=H.latent_dim, img_resolution=H.image_size, img_channels=3, mapping_kwargs={}).cuda()
+    ema_imle = None
 
     if H.use_wandb:
         wandb.init(
