@@ -45,15 +45,15 @@ def equal_lr(module, name='weight'):
 
 
 class EqualLinear(nn.Module):
-    def __init__(self, in_dim, out_dim, bias_init=None):
+    def __init__(self, in_dim, out_dim, bias_init=None, bias_start_dim=None):
         super().__init__()
 
         linear = nn.Linear(in_dim, out_dim)
         # linear.weight.data.normal_()
-        if bias_init is not None:
-            linear.bias.data.fill_(bias_init)
-        else:
-            linear.bias.data.zero_()
+        linear.bias.data.zero_()
+        
+        if bias_init is not None and bias_start_dim is not None:
+            linear.bias.data[bias_start_dim:] = bias_init
 
         self.linear = linear
 
@@ -76,8 +76,8 @@ class MappingNetowrk(nn.Module):
         
         # Remove the LeakyReLU after the first expansion to code_dim * 2
         layers.append(EqualLinear(code_dim, code_dim * 2))
-        # No activation here anymore
-        layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0))
+        # No activation here anymore, initialize only the logvar portion to -2.0
+        layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0, bias_start_dim=code_dim))
         self.style = nn.Sequential(*layers)
 
     def forward(
