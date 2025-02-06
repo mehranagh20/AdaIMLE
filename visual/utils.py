@@ -12,10 +12,10 @@ def get_sample_for_visualization(data, preprocess_fn, num, dataset):
 
 
 
-def generate_for_NN(sampler, orig, initial, snoise, shape, ema_imle, fname, logprint):
+def generate_for_NN(sampler, orig, initial, second_latent_code, snoise, shape, ema_imle, fname, logprint):
     mb = shape[0]
     initial = initial[:mb].cuda()
-    nns = sampler.sample(initial, ema_imle, snoise)
+    nns = sampler.sample(initial, ema_imle, snoise, second_latent_code=second_latent_code)
     batches = [orig[:mb], nns]
     n_rows = len(batches)
     im = np.concatenate(batches, axis=0).reshape((n_rows, mb, *shape[1:])).transpose([0, 2, 1, 3, 4]).reshape(
@@ -25,10 +25,10 @@ def generate_for_NN(sampler, orig, initial, snoise, shape, ema_imle, fname, logp
     imageio.imwrite(fname, im)
 
 
-def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_imle, fname, logprint):
+def generate_images_initial(H, sampler, orig, initial, second_latent_code, snoise, shape, imle, ema_imle, fname, logprint):
     mb = shape[0]
     initial = initial[:mb]
-    batches = [orig[:mb], sampler.sample(initial, imle, snoise)]
+    batches = [orig[:mb], sampler.sample(initial, imle, snoise, second_latent_code=second_latent_code)]
 
     temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
     second_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()

@@ -86,7 +86,8 @@ class DecBlock(nn.Module):
         if self.mixin is not None:
             x = F.interpolate(x, scale_factor=self.base // self.mixin)
         if self.base <= self.H.max_hierarchy:
-            x = self.noise(x, spatial_noise)
+            x_ones = torch.ones_like(x)
+            x = self.noise(x, x_ones)
         x = self.adaIN(x, w)
         x = self.resnet(x)
         return x

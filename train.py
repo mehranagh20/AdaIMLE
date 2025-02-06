@@ -125,8 +125,9 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
 
                 if to_update.shape[0] >= H.num_images_visualize:
                     latents = sampler.selected_latents[to_update[:H.num_images_visualize]]
+                    second_latents = sampler.selected_second_latents[to_update[:H.num_images_visualize]]
                     with torch.no_grad():
-                        generate_for_NN(sampler, split_x_tensor[to_update[:H.num_images_visualize]], latents,
+                        generate_for_NN(sampler, split_x_tensor[to_update[:H.num_images_visualize]], latents, second_latents,
                                         [s[to_update[:H.num_images_visualize]] for s in sampler.selected_snoise],
                                         viz_batch_original.shape, imle,
                                         f'{H.save_dir}/NN-samples_{epoch}-imle.png', logprint)
@@ -147,8 +148,10 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
 
                     if iterate % H.iters_per_images == 0:
                         with torch.no_grad():
+                            second_latents = sampler.selected_second_latents[0: H.num_images_visualize]
                             generate_images_initial(H, sampler, viz_batch_original,
                                                     sampler.selected_latents[0: H.num_images_visualize],
+                                                    second_latents,
                                                     [s[0: H.num_images_visualize] for s in sampler.selected_snoise],
                                                     viz_batch_original.shape, imle, ema_imle,
                                                     f'{H.save_dir}/samples-{iterate}.png', logprint)
