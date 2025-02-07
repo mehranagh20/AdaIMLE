@@ -508,6 +508,7 @@ class Generator(torch.nn.Module):
         self.num_ws = self.synthesis.num_ws
         self.mapping = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.num_ws, **mapping_kwargs)
         self.mapping_network = MappingNetowrk(code_dim=z_dim, n_mlp=8)
+        self.dci_db = None
 
     def forward(self, latents, spatial_noise=None, input_is_w=False, second_latent_code=None):
         if latents.device.type != 'cuda':

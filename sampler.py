@@ -184,11 +184,11 @@ class Sampler:
         with torch.no_grad():
             for i in range(self.pool_size // self.H.imle_db_size):
                 pool_slice = slice(i * self.H.imle_db_size, (i + 1) * self.H.imle_db_size)
-                if not gen.module.dci_db:
+                if not gen.dci_db:
                     device_count = torch.cuda.device_count()
-                    gen.module.dci_db = MDCI(self.H.proj_dim, num_comp_indices=self.H.num_comp_indices,
+                    gen.dci_db = MDCI(self.H.proj_dim, num_comp_indices=self.H.num_comp_indices,
                                                 num_simp_indices=self.H.num_simp_indices, devices=[i for i in range(device_count)])
-                gen.module.dci_db.add(self.pool_samples_proj[pool_slice])
+                gen.dci_db.add(self.pool_samples_proj[pool_slice])
                 pool_latents = self.pool_latents[pool_slice]
                 pool_second_latents = self.pool_second_latents[pool_slice]
                 snoise_pool = [b[pool_slice] for b in self.snoise_pool]
@@ -199,7 +199,7 @@ class Sampler:
                     batch_slice = slice(ind * self.H.imle_batch, ind * self.H.imle_batch + target.shape[0])
                     indices = to_update[batch_slice]
                     x = self.dataset_proj[indices]
-                    nearest_indices, dci_dists = gen.module.dci_db.query(x.float(), num_neighbours=1)
+                    nearest_indices, dci_dists = gen.dci_db.query(x.float(), num_neighbours=1)
                     nearest_indices = nearest_indices.long()[:, 0]
                     dci_dists = dci_dists[:, 0]
 
@@ -212,7 +212,7 @@ class Sampler:
                     for j in range(len(self.res)):
                         self.selected_snoise[j][global_need_update] = snoise_pool[j][nearest_indices[need_update]].detach().clone()
 
-                gen.module.dci_db.clear()
+                gen.dci_db.clear()
 
                 if i % 100 == 0:
                     print("NN calculated for {} out of {} - {}".format((i + 1) * self.H.imle_db_size, self.pool_size, time.time() - t0))
