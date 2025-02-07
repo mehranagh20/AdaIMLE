@@ -183,6 +183,10 @@ def load_opt(H, imle, logprint):
                 return 0.1 + 0.9 * (1 + np.cos(np.pi * progress)) / 2
         return f
     
+    # Make sure H.max_iters is defined and not None
+    if not hasattr(H, 'max_iters') or H.max_iters is None:
+        H.max_iters = 100000  # Set a default value or adjust as needed
+    
     scheduler = torch.optim.lr_scheduler.LambdaLR(
         optimizer,
         lr_lambda=cosine_warmup(H.warmup_iters, H.max_iters)

@@ -48,6 +48,7 @@ def add_imle_arguments(parser):
     parser.add_argument('--width', type=int, default=512)  # width of encoder and decoder convs
     parser.add_argument('--custom_width_str', type=str, default='')  # custom width for each block
     parser.add_argument('--bottleneck_multiple', type=float, default=0.25)  # coefficient width of bottleneck layers, e.g. 0.25 means 1/4 of width
+    parser.add_argument('--max_iters', type=int, default=400000)  # maximum number of iterations
 
     parser.add_argument('--restore_path', type=str, default=None)  # restore from checkpoint
     parser.add_argument('--restore_ema_path', type=str, default=None)  # restore ema from checkpoint
