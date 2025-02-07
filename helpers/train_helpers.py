@@ -162,8 +162,31 @@ def load_imle(H, logprint):
 
 
 def load_opt(H, imle, logprint):
-    optimizer = AdamW(imle.parameters(), weight_decay=H.wd, lr=H.lr, betas=(H.adam_beta1, H.adam_beta2))
-    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=linear_warmup(H.warmup_iters))
+    optimizer = AdamW(
+        imle.parameters(),
+        lr=H.lr,
+        betas=(H.adam_beta1, H.adam_beta2),
+        weight_decay=H.wd,
+        eps=1e-8,
+        amsgrad=True
+    )
+    
+    for group in optimizer.param_groups:
+        group['clip_norm'] = 1.0
+    
+    def cosine_warmup(warmup_iters, max_iters):
+        def f(iteration):
+            if iteration < warmup_iters:
+                return iteration / warmup_iters
+            else:
+                progress = (iteration - warmup_iters) / (max_iters - warmup_iters)
+                return 0.1 + 0.9 * (1 + np.cos(np.pi * progress)) / 2
+        return f
+    
+    scheduler = torch.optim.lr_scheduler.LambdaLR(
+        optimizer,
+        lr_lambda=cosine_warmup(H.warmup_iters, H.max_iters)
+    )
 
     if H.restore_optimizer_path:
         optimizer.load_state_dict(
