@@ -18,7 +18,7 @@ from torch_utils import persistence
 from torch_utils.ops import conv2d_gradfix
 from torch_utils.ops import filtered_lrelu
 from torch_utils.ops import bias_act
-from mapping_network import MappingNetowrk
+from mapping_network import MappingNetowrk as old_mapping_network
 
 #----------------------------------------------------------------------------
 
@@ -507,7 +507,7 @@ class Generator(torch.nn.Module):
         self.synthesis = SynthesisNetwork(w_dim=w_dim, img_resolution=img_resolution, img_channels=img_channels, **synthesis_kwargs)
         self.num_ws = self.synthesis.num_ws
         self.mapping = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.num_ws, **mapping_kwargs)
-        self.mapping_network = MappingNetowrk(code_dim=z_dim, n_mlp=8)
+        self.mapping_network = old_mapping_network(code_dim=z_dim, n_mlp=8)
         self.dci_db = None
 
     def forward(self, latents, spatial_noise=None, input_is_w=False, second_latent_code=None):

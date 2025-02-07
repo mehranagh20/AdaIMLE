@@ -208,7 +208,7 @@ def main(H=None):
         H = H_cur
     H, data_train, data_valid_or_test, preprocess_fn = set_up_data(H)
     # imle, ema_imle = load_imle(H, logprint)
-    imle = Generator(z_dim=H.latent_dim, c_dim=0, w_dim=H.latent_dim, img_resolution=H.image_size, img_channels=3, mapping_kwargs={})
+    imle = Generator(z_dim=H.latent_dim, c_dim=0, w_dim=H.latent_dim, img_resolution=H.image_size, img_channels=3, mapping_kwargs={}).to('cuda')
     ema_imle = None
 
     if H.use_wandb:

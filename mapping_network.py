@@ -82,7 +82,7 @@ class MappingNetowrk(nn.Module):
     def forward(
         self,
         input,
-        second_latent_code=None,
+        second_latent_code,
         noise=None,
         step=0,
         alpha=-1,
