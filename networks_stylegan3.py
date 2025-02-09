@@ -518,8 +518,8 @@ class Generator(torch.nn.Module):
         if second_latent_code.device.type != 'cuda':
             second_latent_code = second_latent_code.cuda()
         
-        new_latents = self.mapping_network(latents, second_latent_code)
-        ws = self.mapping(new_latents, None, truncation_psi=1, truncation_cutoff=None, update_emas=False)
+        # new_latents = self.mapping_network(latents, second_latent_code)
+        ws = self.mapping(latents, None, truncation_psi=1, truncation_cutoff=None, update_emas=False)
         img = self.synthesis(ws, update_emas=False)
         return img
     # def forward(self, z, c, truncation_psi=1, truncation_cutoff=None, update_emas=False, **synthesis_kwargs):
