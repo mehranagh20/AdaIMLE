@@ -32,10 +32,10 @@ class Sampler:
         blocks = parse_layer_string(H.dec_blocks)
         self.block_res = [s[0] for s in blocks]
         self.res = sorted(set([s[0] for s in blocks if s[0] <= H.max_hierarchy]))
-        self.neutral_snoise = [torch.zeros([self.H.imle_db_size, 1, s, s], dtype=torch.float32) for s in self.res]
-        self.snoise_tmp = [torch.randn([self.H.imle_db_size, 1, s, s], dtype=torch.float32) for s in self.res]
-        self.selected_snoise = [torch.randn([sz, 1, s, s,], dtype=torch.float32) for s in self.res]
-        self.snoise_pool = [torch.randn([self.pool_size, 1, s, s], dtype=torch.float32) for s in self.res]
+        self.neutral_snoise = [torch.zeros([self.H.imle_db_size, 1, s, s], dtype=torch.float16) for s in self.res]
+        self.snoise_tmp = [torch.randn([self.H.imle_db_size, 1, s, s], dtype=torch.float16) for s in self.res]
+        self.selected_snoise = [torch.randn([sz, 1, s, s], dtype=torch.float16) for s in self.res]
+        self.snoise_pool = [torch.randn([self.pool_size, 1, s, s], dtype=torch.float16) for s in self.res]
 
         self.selected_dists = torch.empty([sz], dtype=torch.float32).cuda()
         self.selected_dists[:] = np.inf

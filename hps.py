@@ -96,6 +96,7 @@ def add_imle_arguments(parser):
     parser.add_argument('--reconstruct_iter_num', type=int, default=100000)  # number of iterations for reconstructing images using backtracking
     parser.add_argument('--imle_force_resample', type=int, default=30)  # number of iterations to wait before ignoringthe threshold and resample anyway
     parser.add_argument('--snoise_factor', type=int, default=8)  # spatial noise factor
+    parser.add_argument('--rnd_snoise', type=int, default=0)  # whether to use random spatial noise
     parser.add_argument('--max_hierarchy', type=int, default=256)  # maximum hierarchy level for spatial noise, i.e., 64 means up to 64x64 spatial noise but not higher resolution
     parser.add_argument('--load_strict', type=int, default=1)  # whether to load checkpoints strict
     parser.add_argument('--lpips_path', type=str, default='./lpips')  # path to lpips weights

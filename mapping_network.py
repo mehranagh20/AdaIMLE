@@ -65,13 +65,13 @@ class MappingNetowrk(nn.Module):
     def __init__(self, code_dim=512, n_mlp=8):
         super().__init__()
 
-        # Add min and max logvar as constants
-        self.min_logvar = -5
-        self.max_logvar = 1
+        # Change constants to trainable parameters
+        self.min_logvar = nn.Parameter(torch.tensor(-1.0))
+        self.max_logvar = nn.Parameter(torch.tensor(2.0))
 
         f_layers = []
         s_layers = []
-        for i in range(4):
+        for i in range(5):
             f_layers.append(EqualLinear(code_dim, code_dim))
             f_layers.append(nn.LeakyReLU(0.2))
             s_layers.append(EqualLinear(code_dim, code_dim))
@@ -79,11 +79,11 @@ class MappingNetowrk(nn.Module):
         
         f_layers.append(EqualLinear(code_dim, code_dim * 2))
         f_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
-        f_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0, bias_start_dim=code_dim))
+        f_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-0.5, bias_start_dim=code_dim))
 
         s_layers.append(EqualLinear(code_dim, code_dim * 2))
         s_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
-        s_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-2.0, bias_start_dim=code_dim))
+        s_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-0.5, bias_start_dim=code_dim))
 
         self.f_style = nn.Sequential(*f_layers)
         self.s_style = nn.Sequential(*s_layers)
@@ -140,8 +140,10 @@ class AdaptiveInstanceNorm(nn.Module):
 class NoiseInjection(nn.Module):
     def __init__(self, channel):
         super().__init__()
-
         self.weight = nn.Parameter(torch.randn(1, channel, 1, 1))
 
     def forward(self, image, spatial_noise):
-        return image + self.weight * spatial_noise
+        # Convert spatial noise to half precision and move to GPU
+        if spatial_noise.device != self.weight.device:
+            spatial_noise = spatial_noise.half().to(self.weight.device, non_blocking=True)
+        return image + (self.weight * spatial_noise).to(image.dtype)

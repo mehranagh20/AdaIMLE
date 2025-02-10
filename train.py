@@ -101,7 +101,9 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         latents = sampler.selected_latents[batch_slice]
                         with torch.no_grad():
                             snoise = [s[batch_slice] for s in sampler.selected_snoise]
-                            generate_for_NN(sampler, x[0], latents, snoise, viz_batch_original.shape, imle,
+                            second_latents = sampler.selected_second_latents[batch_slice]
+                            third_latents = sampler.selected_third_latents[batch_slice]
+                            generate_for_NN(sampler, x[0], latents, second_latents, third_latents, snoise, viz_batch_original.shape, imle,
                                 f'{H.save_dir}/NN-samples_{outer}-{split_ind}-imle.png', logprint)
                         print('loaded latest latents')
 
@@ -126,7 +128,9 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                 if to_update.shape[0] >= H.num_images_visualize:
                     latents = sampler.selected_latents[to_update[:H.num_images_visualize]]
                     with torch.no_grad():
-                        generate_for_NN(sampler, split_x_tensor[to_update[:H.num_images_visualize]], latents,
+                        second_latents = sampler.selected_second_latents[to_update[:H.num_images_visualize]]
+                        third_latents = sampler.selected_third_latents[to_update[:H.num_images_visualize]]
+                        generate_for_NN(sampler, split_x_tensor[to_update[:H.num_images_visualize]], latents, second_latents, third_latents,
                                         [s[to_update[:H.num_images_visualize]] for s in sampler.selected_snoise],
                                         viz_batch_original.shape, imle,
                                         f'{H.save_dir}/NN-samples_{epoch}-imle.png', logprint)

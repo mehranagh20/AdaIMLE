@@ -120,9 +120,16 @@ class Decoder(nn.Module):
             third_latent_code = torch.randn_like(latent_code)
         w = self.mapping_network(latent_code, second_latent_code, third_latent_code)
         
-        x = self.constant.repeat(latent_code.shape[0], 1, 1, 1)
+        # x = self.constant.repeat(latent_code.shape[0], 1, 1, 1)
         if spatial_noise:
-            res_to_noise = {x.shape[3]: x for x in spatial_noise}
+            res_to_noise = {}
+            for sn in spatial_noise:
+                if not self.H.rnd_snoise:
+                    res_to_noise[sn.shape[3]] = sn
+                else:
+                    res_to_noise[sn.shape[3]] = sn.normal_() * 0.1
+
+        x = res_to_noise[self.constant.shape[3]].to(latent_code.device)
         for idx, block in enumerate(self.dec_blocks):
             noise = None
             if block.base <= self.H.max_hierarchy:
@@ -140,5 +147,17 @@ class IMLE(nn.Module):
         self.decoder = Decoder(H)
 
     def forward(self, latents, spatial_noise=None, input_is_w=False, second_latent_code=None, third_latent_code=None):
+        # Move latents to CUDA if not already
+        if not latents.is_cuda:
+            latents = latents.cuda()
+        
+        # Move second_latent_code to CUDA if it exists and isn't already
+        if second_latent_code is not None and not second_latent_code.is_cuda:
+            second_latent_code = second_latent_code.cuda()
+            
+        # Move third_latent_code to CUDA if it exists and isn't already
+        if third_latent_code is not None and not third_latent_code.is_cuda:
+            third_latent_code = third_latent_code.cuda()
+
         return self.decoder.forward(latents, spatial_noise, input_is_w, second_latent_code, third_latent_code)
 
