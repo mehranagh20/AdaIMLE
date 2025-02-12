@@ -79,6 +79,7 @@ def add_imle_arguments(parser):
     parser.add_argument('--imle_batch', type=int, default=16)  # imle batch size used for sampling
     parser.add_argument('--subset_len', type=int, default=-1)  # subset length for training -- random subset of the dataset. -1 means full dataset
     parser.add_argument('--latent_dim', type=int, default=1024)  # latent code dimension
+    parser.add_argument('--rank', type=int, default=4)  # rank of the low-rank covariance approximation
     parser.add_argument('--second_latent_samples', type=int, default=10)  # number of second latent samples
     parser.add_argument('--imle_perturb_coef', type=float, default=0.001)  # imle perturbation coefficient to avoid same latent codes
     parser.add_argument('--lpips_net', type=str, default='vgg')  # lpips network type

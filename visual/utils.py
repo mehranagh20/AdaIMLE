@@ -32,7 +32,7 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
 
     temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
     second_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
-    third_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+    third_latent_rnds = torch.randn([mb, H.rank], dtype=torch.float32).cuda()
     
     # Generate samples with random first latent
     for t in range(2):
@@ -100,15 +100,15 @@ def generate_images_initial_test(H, sampler, orig, initial, snoise, shape, imle,
     for i in range(2):
         temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
         second_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
-        third_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
-        tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+        third_latent_rnds = torch.randn([mb, H.rank], dtype=torch.float32).cuda()
+        tmp_snoise = [s[:mb].zero_() for s in sampler.snoise_tmp]
         
 
         # Generate samples varying second latent
         for i in range(6):
             # temp_latent_rnds.zero_()
             # second_latent_rnds.normal_()
-            third_latent_rnds.normal_()
+            second_latent_rnds.normal_()
             batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, 
                                         second_latent_code=second_latent_rnds,
                                         third_latent_code=third_latent_rnds))

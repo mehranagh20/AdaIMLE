@@ -47,9 +47,14 @@ def equal_lr(module, name='weight'):
 class EqualLinear(nn.Module):
     def __init__(self, in_dim, out_dim, bias_init=None, bias_start_dim=None):
         super().__init__()
-
         linear = nn.Linear(in_dim, out_dim)
-        # linear.weight.data.normal_()
+        
+        # Improved initialization with mean-specific scaling
+        if any(n.startswith('final') for n,_ in self.named_parameters()):
+            gain = sqrt(2.0)  # Higher gain for final layers
+            nn.init.kaiming_normal_(linear.weight, a=0.2, mode='fan_in', nonlinearity='leaky_relu')
+            linear.weight.data.mul_(gain)
+        
         linear.bias.data.zero_()
         
         if bias_init is not None and bias_start_dim is not None:
@@ -62,53 +67,65 @@ class EqualLinear(nn.Module):
 
 
 class MappingNetowrk(nn.Module):
-    def __init__(self, code_dim=512, n_mlp=8):
+    def __init__(self, code_dim=512, rank=4):
         super().__init__()
-
-        # Change constants to trainable parameters
-        self.min_logvar = nn.Parameter(torch.tensor(-1.0))
-        self.max_logvar = nn.Parameter(torch.tensor(2.0))
-
-        f_layers = []
-        s_layers = []
-        for i in range(5):
-            f_layers.append(EqualLinear(code_dim, code_dim))
-            f_layers.append(nn.LeakyReLU(0.2))
-            s_layers.append(EqualLinear(code_dim, code_dim))
-            s_layers.append(nn.LeakyReLU(0.2))
+        self.code_dim = code_dim
+        self.rank = rank
         
-        f_layers.append(EqualLinear(code_dim, code_dim * 2))
-        f_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
-        f_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-0.5, bias_start_dim=code_dim))
+        # Store layers properly with residual connections
+        self.layers = nn.ModuleList([
+            nn.Sequential(
+                EqualLinear(code_dim, code_dim),
+                nn.LeakyReLU(0.2),
+                PixelNorm()
+            ) for _ in range(8)
+        ])
+        
+        # Add final processing layers
+        self.final = nn.Sequential(
+            EqualLinear(code_dim, code_dim * 4),
+            nn.LeakyReLU(0.2),
+            EqualLinear(code_dim * 4, code_dim * (2 + rank))
+        )
 
-        s_layers.append(EqualLinear(code_dim, code_dim * 2))
-        s_layers.append(EqualLinear(code_dim * 2, code_dim * 2))
-        s_layers.append(EqualLinear(code_dim * 2, code_dim * 2, bias_init=-0.5, bias_start_dim=code_dim))
+        # Add special initialization
+        self._initialize_weights()
 
-        self.f_style = nn.Sequential(*f_layers)
-        self.s_style = nn.Sequential(*s_layers)
+    def _initialize_weights(self):
+        # Special initialization for mean outputs
+        with torch.no_grad():
+            # Final layer weights for mean component
+            final_layer = self.final[-1].linear
+            fan_in = final_layer.weight.size(1)
+            
+            # Initialize mean weights with larger variance
+            mean_weights = final_layer.weight[:self.code_dim]
+            mean_weights.normal_(0, sqrt(2.0 / fan_in) * 5)
+            
+            # Initialize bias for mean outputs
+            final_layer.bias[:self.code_dim].zero_()
 
-    def forward(
-        self,
-        input,
-        l1,
-        l2,
-        noise=None,
-        step=0,
-        alpha=-1,
-        mean_style=None,
-        style_weight=0,
-        mixing_range=(-1, -1),
-    ):
-        mean, _ = self.f_style(input).chunk(2, dim=1)
+    def forward(self, input, l1, l2):
+        # Process through all layers
+        x = input
+        for layer in self.layers:
+            x = layer(x)
+        
+        # Get final output
+        output = self.final(x)
+        
+        # Split into components
+        mean = output[:, :self.code_dim]
+        logvar = output[:, self.code_dim:2*self.code_dim]
+        low_rank_flat = output[:, 2*self.code_dim:2*self.code_dim + self.code_dim*self.rank]
+        
+        # Rest of the forward pass remains the same
+        low_rank = low_rank_flat.view(-1, self.code_dim, self.rank)
+        std_diag = torch.exp(0.5 * logvar)
+        
+        sample = mean + torch.bmm(low_rank, l2.unsqueeze(-1)).squeeze(-1) + std_diag * l1
+        return sample
 
-        mean, logvar = self.s_style(mean).chunk(2, dim=1)
-        std = torch.exp(logvar)
-        s2 = mean + l1 * std
-
-        return s2
-
-    # def mean_style(self, input):
 
 class AdaptiveInstanceNorm(nn.Module):
     def __init__(self, in_channel, style_dim):

@@ -96,7 +96,7 @@ class Decoder(nn.Module):
     def __init__(self, H):
         super().__init__()
         self.H = H
-        self.mapping_network = MappingNetowrk(code_dim=H.latent_dim, n_mlp=H.n_mpl)
+        self.mapping_network = MappingNetowrk(code_dim=H.latent_dim, rank=H.rank)
         resos = set()
         cond_width = int(H.width * H.bottleneck_multiple)
         dec_blocks = []
@@ -116,8 +116,8 @@ class Decoder(nn.Module):
     def forward(self, latent_code, spatial_noise, input_is_w=False, second_latent_code=None, third_latent_code=None):
         if second_latent_code is None:
             second_latent_code = torch.randn_like(latent_code)
-        if third_latent_code is None:
-            third_latent_code = torch.randn_like(latent_code)
+
+
         w = self.mapping_network(latent_code, second_latent_code, third_latent_code)
         
         # x = self.constant.repeat(latent_code.shape[0], 1, 1, 1)
@@ -128,6 +128,7 @@ class Decoder(nn.Module):
                     res_to_noise[sn.shape[3]] = sn
                 else:
                     res_to_noise[sn.shape[3]] = sn.normal_() * 0.1
+                    res_to_noise[sn.shape[3]] = sn
 
         x = res_to_noise[self.constant.shape[3]].to(latent_code.device)
         for idx, block in enumerate(self.dec_blocks):

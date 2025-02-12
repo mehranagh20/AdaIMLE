@@ -26,8 +26,8 @@ class Sampler:
         self.selected_latents_tmp = torch.randn([sz, H.latent_dim], dtype=torch.float32)
         self.selected_second_latents = torch.randn([sz, H.latent_dim], dtype=torch.float32)
         self.selected_second_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
-        self.selected_third_latents = torch.randn([sz, H.latent_dim], dtype=torch.float32)
-        self.selected_third_latents_tmp = torch.empty([sz, H.latent_dim], dtype=torch.float32)
+        self.selected_third_latents = torch.randn([sz, H.rank], dtype=torch.float32)
+        self.selected_third_latents_tmp = torch.empty([sz, H.rank], dtype=torch.float32)
 
         blocks = parse_layer_string(H.dec_blocks)
         self.block_res = [s[0] for s in blocks]
@@ -46,7 +46,7 @@ class Sampler:
 
         self.pool_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
         self.pool_second_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
-        self.pool_third_latents = torch.randn([self.pool_size, H.latent_dim], dtype=torch.float32)
+        self.pool_third_latents = torch.randn([self.pool_size, H.rank], dtype=torch.float32)
         self.sample_pool_usage = torch.ones([sz], dtype=torch.bool)
 
         self.projections = []
