@@ -155,6 +155,8 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         with torch.no_grad():
                             generate_images_initial(H, sampler, viz_batch_original,
                                                     sampler.selected_latents[0: H.num_images_visualize],
+                                                    sampler.selected_second_latents[0: H.num_images_visualize],
+                                                    sampler.selected_third_latents[0: H.num_images_visualize],
                                                     [s[0: H.num_images_visualize] for s in sampler.selected_snoise],
                                                     viz_batch_original.shape, imle, ema_imle,
                                                     f'{H.save_dir}/samples-{iterate}.png', logprint)

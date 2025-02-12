@@ -25,10 +25,10 @@ def generate_for_NN(sampler, orig, initial, second_latent, third_latent, snoise,
     imageio.imwrite(fname, im)
 
 
-def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_imle, fname, logprint):
+def generate_images_initial(H, sampler, orig, initial, second_latent, third_latent, snoise, shape, imle, ema_imle, fname, logprint):
     mb = shape[0]
     initial = initial[:mb]
-    batches = [orig[:mb], sampler.sample(initial, imle, snoise)]
+    batches = [orig[:mb], sampler.sample(initial, imle, snoise, second_latent_code=second_latent, third_latent_code=third_latent)]
 
     temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
     second_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
@@ -38,7 +38,7 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
     for t in range(2):
         temp_latent_rnds.normal_()
         tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
-        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise))
+        batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, second_latent_code=second_latent_rnds, third_latent_code=third_latent_rnds))
 
     # Generate samples varying second latent
     for i in range(3):
@@ -46,14 +46,14 @@ def generate_images_initial(H, sampler, orig, initial, snoise, shape, imle, ema_
         second_latent_rnds.normal_()
         batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, 
                                     second_latent_code=second_latent_rnds,
-                                    third_latent_code=torch.zeros_like(third_latent_rnds)))
+                                    third_latent_code=third_latent_rnds))
     
     # Generate samples varying third latent
     for i in range(3):
         tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
         third_latent_rnds.normal_()
         batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise,
-                                    second_latent_code=torch.zeros_like(second_latent_rnds),
+                                    second_latent_code=second_latent_rnds,
                                     third_latent_code=third_latent_rnds))
 
     # Generate samples varying third latent
