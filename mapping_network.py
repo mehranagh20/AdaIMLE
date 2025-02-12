@@ -100,17 +100,11 @@ class MappingNetowrk(nn.Module):
         style_weight=0,
         mixing_range=(-1, -1),
     ):
-        mean, logvar = self.f_style(input).chunk(2, dim=1)
-        # logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
-        # logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
-        std = torch.exp(logvar)
-        s1 = mean + l1 * std
+        mean, _ = self.f_style(input).chunk(2, dim=1)
 
-        mean, logvar = self.s_style(s1).chunk(2, dim=1)
-        # logvar = self.max_logvar - torch.nn.functional.softplus(self.max_logvar - logvar)
-        # logvar = self.min_logvar + torch.nn.functional.softplus(logvar - self.min_logvar)
+        mean, logvar = self.s_style(mean).chunk(2, dim=1)
         std = torch.exp(logvar)
-        s2 = mean + l2 * std
+        s2 = mean + l1 * std
 
         return s2
 
