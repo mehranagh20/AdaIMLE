@@ -90,3 +90,31 @@ def generate_and_save(H, imle, sampler, n_samp, subdir='fid'):
             for j in range(H.imle_batch):
                 imageio.imwrite(f'{H.save_dir}/{subdir}/{i * H.imle_batch + j}.png', samp[j])
 
+
+
+def generate_images_initial_test(H, sampler, orig, initial, snoise, shape, imle, ema_imle, fname, logprint):
+    mb = shape[0]
+    initial = initial[:mb]
+    batches = []
+
+    for i in range(2):
+        temp_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+        second_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+        third_latent_rnds = torch.randn([mb, H.latent_dim], dtype=torch.float32).cuda()
+        tmp_snoise = [s[:mb].normal_() for s in sampler.snoise_tmp]
+        
+
+        # Generate samples varying second latent
+        for i in range(6):
+            # temp_latent_rnds.zero_()
+            # second_latent_rnds.normal_()
+            third_latent_rnds.normal_()
+            batches.append(sampler.sample(temp_latent_rnds, imle, tmp_snoise, 
+                                        second_latent_code=second_latent_rnds,
+                                        third_latent_code=third_latent_rnds))
+    n_rows = len(batches)
+    im = np.concatenate(batches, axis=0).reshape((n_rows, mb, *shape[1:])).transpose([0, 2, 1, 3, 4]).reshape(
+        [n_rows * shape[1], mb * shape[2], 3])
+
+    logprint(f'printing samples to {fname}')
+    imageio.imwrite(fname, im)

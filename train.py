@@ -24,6 +24,7 @@ from visual.nn_interplate import nn_interp
 from visual.spatial_visual import spatial_vissual
 from visual.utils import (generate_and_save, generate_for_NN,
                           generate_images_initial,
+                          generate_images_initial_test,
                           get_sample_for_visualization)
 
 
@@ -101,9 +102,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                         latents = sampler.selected_latents[batch_slice]
                         with torch.no_grad():
                             snoise = [s[batch_slice] for s in sampler.selected_snoise]
-                            second_latents = sampler.selected_second_latents[batch_slice]
-                            third_latents = sampler.selected_third_latents[batch_slice]
-                            generate_for_NN(sampler, x[0], latents, second_latents, third_latents, snoise, viz_batch_original.shape, imle,
+                            generate_for_NN(sampler, x[0], latents, snoise, viz_batch_original.shape, imle,
                                 f'{H.save_dir}/NN-samples_{outer}-{split_ind}-imle.png', logprint)
                         print('loaded latest latents')
 
@@ -128,9 +127,7 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                 if to_update.shape[0] >= H.num_images_visualize:
                     latents = sampler.selected_latents[to_update[:H.num_images_visualize]]
                     with torch.no_grad():
-                        second_latents = sampler.selected_second_latents[to_update[:H.num_images_visualize]]
-                        third_latents = sampler.selected_third_latents[to_update[:H.num_images_visualize]]
-                        generate_for_NN(sampler, split_x_tensor[to_update[:H.num_images_visualize]], latents, second_latents, third_latents,
+                        generate_for_NN(sampler, split_x_tensor[to_update[:H.num_images_visualize]], latents,
                                         [s[to_update[:H.num_images_visualize]] for s in sampler.selected_snoise],
                                         viz_batch_original.shape, imle,
                                         f'{H.save_dir}/NN-samples_{epoch}-imle.png', logprint)
@@ -221,6 +218,17 @@ def main(H=None):
         )
 
     os.makedirs(f'{H.save_dir}/fid', exist_ok=True)
+
+    if H.mode == 'test-three':
+        with torch.no_grad():
+            sampler = Sampler(H, len(data_train), preprocess_fn)
+            # generate_images_initial(H, sampler, data_train, data_train, sampler.snoise_tmp, (8, 256, 256, 3), imle, ema_imle, f'{H.save_dir}/samples-test-three.png', logprint)
+            viz_batch_original, _ = get_sample_for_visualization(data_train, preprocess_fn, H.num_images_visualize, H.dataset)
+            generate_images_initial_test(H, sampler, viz_batch_original,
+                                    sampler.selected_latents[0: H.num_images_visualize],
+                                    [s[0: H.num_images_visualize] for s in sampler.selected_snoise],
+                                    viz_batch_original.shape, imle, ema_imle,
+                                    f'{H.save_dir}/samples-test-three.png', logprint)
 
     if H.mode == 'eval':
         with torch.no_grad():
