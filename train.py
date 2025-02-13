@@ -216,12 +216,17 @@ def main(H=None):
     imle, ema_imle = load_imle(H, logprint)
 
     if H.use_wandb:
-        wandb.init(
-            name=H.wandb_name,
-            project=H.wandb_project,
-            config=H,
-            mode=H.wandb_mode,
-        )
+        try:
+            wandb.init(
+                name=H.wandb_name,
+                project=H.wandb_project,
+                config=H,
+                mode=H.wandb_mode,
+                settings=wandb.Settings(_service_wait=60)  # Increase timeout to 60 seconds
+            )
+        except Exception as e:
+            logprint(f"Warning: Failed to initialize wandb: {str(e)}")
+            H.use_wandb = False  # Disable wandb for this run
 
     os.makedirs(f'{H.save_dir}/fid', exist_ok=True)
 
