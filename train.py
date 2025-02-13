@@ -186,19 +186,19 @@ def train_loop_imle(H, data_train, data_valid, preprocess_fn, imle, ema_imle, lo
                     'min_loss': torch.min(cur_dists).item(),
                 }
 
-                if epoch % H.fid_freq == 0:
-                    generate_and_save(H, imle, sampler, subset_len * H.fid_factor)
-                    print(f'{H.data_root}/img', f'{H.save_dir}/fid/')
-                    cur_fid = fid.compute_fid(f'{H.data_root}/img', f'{H.save_dir}/fid/', verbose=False)
-                    if cur_fid < best_fid:
-                        best_fid = cur_fid
-                        # save models
-                        fp = os.path.join(H.save_dir, 'best_fid')
-                        logprint(f'Saving model best fid {best_fid} @ {iterate} to {fp}')
-                        save_model(fp, imle, ema_imle, optimizer, H)
+                # if epoch % H.fid_freq == 0:
+                #     generate_and_save(H, imle, sampler, subset_len * H.fid_factor)
+                #     print(f'{H.data_root}/img', f'{H.save_dir}/fid/')
+                #     cur_fid = fid.compute_fid(f'{H.data_root}/img', f'{H.save_dir}/fid/', verbose=False)
+                #     if cur_fid < best_fid:
+                #         best_fid = cur_fid
+                #         # save models
+                #         fp = os.path.join(H.save_dir, 'best_fid')
+                #         logprint(f'Saving model best fid {best_fid} @ {iterate} to {fp}')
+                #         save_model(fp, imle, ema_imle, optimizer, H)
 
-                    metrics['fid'] = cur_fid
-                    metrics['best_fid'] = best_fid
+                #     metrics['fid'] = cur_fid
+                #     metrics['best_fid'] = best_fid
                     
 
                 logprint(model=H.desc, type='train_loss', epoch=epoch, step=iterate, **metrics)
