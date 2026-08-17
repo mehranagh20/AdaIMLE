@@ -1162,3 +1162,34 @@ a:hover {
   text-align: justify;
   
 }
+
+/* ---- Readable content width on wide screens ---- */
+.page-main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+.page-main img,
+.page-main video {
+  max-width: 100%;
+  height: auto;
+}
+.page-main .container-fluid {
+  padding: 12px 0;
+}
+.page-main .div-test {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  text-align: left;
+  margin: 0.75rem 0;
+}
+.page-main hr {
+  margin: 1.75rem 0;
+}
+.page-main pre.citation {
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 1rem;
+  border-radius: 6px;
+}

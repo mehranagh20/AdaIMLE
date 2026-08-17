@@ -118,7 +118,7 @@ Adaptive IMLE outperforms baselines on both image quality and mode coverage:
 ---
 
 <!-- include video video.mp4 -->
-<video width="70%" height="240" controls autoplay class="center">
+<video width="70%" controls autoplay muted playsinline class="center">
   <source src="assets/internet.mp4">
   Your browser does not support the video tag.
 </video>
